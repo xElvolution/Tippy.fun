@@ -1,0 +1,105 @@
+AI
+OpenClaw
+Give your OpenClaw AI agent a self-custodial WDK wallet in minutes
+
+The WDK skill for OpenClaw is a community skill, developed and maintained independently by a third-party contributor.
+
+Tether and the WDK Team do not endorse or assume responsibility for its code, security, or maintenance. Use your own judgment and proceed at your own risk. Artificial intelligence has inherent risks and limitations. You assume full responsibility for any reliance and use of artificial intelligence and agree that any such reliance and use is entirely at your own risk.
+
+OpenClaw is an open-source AI agent platform. With the WDK community skill, your OpenClaw agent can create wallets, send transactions, swap tokens, bridge assets, and interact with DeFi protocols. Everything stays self-custodial.
+
+The WDK community skill follows the AgentSkills specification, so it works with any compatible agent platform. This page covers the OpenClaw-specific setup.
+
+Install the WDK Skill
+
+Copy
+npx skills add tetherto/wdk-agent-skills
+The installer will prompt you to select which agent skill you want to install. Pick the one that fits your use case. Once installed, OpenClaw picks it up automatically on the next session.
+
+The skill will also be published on ClawHub shortly.
+
+Configuration
+The WDK community skill does not require environment variables. Your agent will ask for a seed phrase in conversation when it needs to create or recover a wallet. The skill passes the seed phrase as a constructor parameter in code rather than reading it from configuration.
+
+Your seed phrase controls real funds. Never share it, commit it to version control, or expose it in logs. The skill instructs agents to never log or expose seed phrases or private keys.
+
+Verify It Works
+Start a new OpenClaw session and try a simple prompt:
+
+
+Copy
+Create a multi-chain wallet with Ethereum and Bitcoin support, then show me the addresses.
+The agent should use the WDK community skill to create wallet accounts and return the generated addresses. All write operations (transactions, swaps, bridges) require your explicit confirmation before executing.
+
+OpenClaw creating a multi-chain wallet using the WDK skill
+Example output from the WDK skill creating a multi-chain wallet
+What Your Agent Can Do
+Once the skill is loaded, your agent can:
+
+Create wallets across 20+ blockchains (EVM, Bitcoin, Solana, TON, Tron, Spark)
+
+Send transactions and token transfers
+
+Swap tokens via DEX aggregators (Velora, StonFi)
+
+Bridge assets cross-chain with USDT0
+
+Lend and borrow through Aave V3
+
+Buy and sell crypto via MoonPay fiat on/off-ramps
+
+For the full list of capabilities and how skills work, see Agent Skills.
+
+Security Risks and Safety Precautions
+OpenClaw is powerful because it runs on your system and can take real actions like creating files, fetching data from the web, and executing transactions. That same power can become a security risk if you're not careful about how and where you run it.
+
+This isn't a flaw in OpenClaw. It's what happens when you give any AI agent direct system access. Knowing these risks lets you use OpenClaw safely.
+
+Why running OpenClaw locally requires caution
+When you run OpenClaw on your own computer or a virtual server, you're allowing a chat interface to trigger actions on that system. This is a concern if your bot:
+
+Has access to sensitive directories
+
+Runs with elevated privileges
+
+Is connected to a publicly accessible chat
+
+Receives poorly scoped instructions
+
+It can unintentionally modify files, overwrite data, or expose information you didn't intend to share. The risk isn't that OpenClaw is malicious. The risk is that it will do exactly what it's told, even when the instruction is vague or unsafe.
+
+How to use OpenClaw safely
+To reduce risk, here are some practical safety measures:
+
+Run OpenClaw as a non-privileged user
+
+Keep its working files in a dedicated directory
+
+Avoid connecting it to public or shared chats initially
+
+Be explicit when asking it to read or write files
+
+Test new capabilities on a disposable system or VM
+
+Think of OpenClaw the same way you'd think about running scripts on your system: powerful and useful, but something you need to be careful with.
+
+Inherent Limitations of Artificial Intelligence
+OpenClaw makes use of artificial intelligence and machine learning technologies. While the use of artificial intelligence and machine learning enables capabilities, it also involves inherent limitations and risks. These include:
+
+The potential for inaccurate, incomplete, unexpected or misleading outputs or actions (including so-called hallucinations)
+
+The risk that outputs or actions may contain biases
+
+The possibility of errors related to document quality or text recognition of inputs
+
+The possibility that the outputs may suggest specific immediate or near term actions that should not be relied upon
+
+The risk that OpenClaw may take unexpected actions (including the sending of assets)
+
+Next Steps
+Agent Skills - Full capabilities, how skills work, and a comparison with other agentic wallet solutions
+
+MCP Toolkit - Programmatic wallet access for MCP-compatible agents
+
+OpenClaw Skills Documentation - How OpenClaw discovers and loads skills
+
