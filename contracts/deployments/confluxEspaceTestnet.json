@@ -1,0 +1,14 @@
+{
+  "network": "confluxEspaceTestnet",
+  "chainId": 71,
+  "deployer": "0x6E6Aa0AcC394666F38f0C90656eC31e63443D179",
+  "deployedAt": "2026-04-20T23:30:27.445Z",
+  "tippyMaker": {
+    "address": "0x4874b94074a16dA564766D25beC3251C0156265d",
+    "txHash": "0x9beb1bf8d218d81f63cd5e1ecf240333cdd72eb053b90bd513f69fa01aa7ccf5"
+  },
+  "mocks": {
+    "tUSDT0": "0x9a70e007447Fe6d787518Dc7E84DC39A4A302Bea",
+    "tAxCNH": "0x1A8678833C4b2A849F0edE21964A14D29c18B49a"
+  }
+}

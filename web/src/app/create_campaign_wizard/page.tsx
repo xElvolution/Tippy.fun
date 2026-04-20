@@ -1,5 +1,5 @@
-// Automatically generated
 import Link from 'next/link';
+import { CreateCampaignForm } from '@/components/CreateCampaignForm';
 
 export default function CreateCampaignWizard() {
   return (
@@ -43,25 +43,8 @@ export default function CreateCampaignWizard() {
 </div>
 {/* Wizard Canvas */}
 <div className="space-y-8">
-{/* Step 1: Basics Card (Expanded) */}
 <section className="bg-surface-container-lowest rounded-xl p-8 shadow-[0_20px_40px_rgba(17,28,45,0.06)]">
-<div className="flex items-start justify-between mb-8">
-<div>
-<h2 className="text-2xl font-headline font-bold mb-1">Campaign Fundamentals</h2>
-<p className="text-on-surface-variant text-sm">Define the hook and story of your campaign.</p>
-</div>
-<span className="bg-primary-fixed text-on-primary-fixed-variant px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Active Step</span>
-</div>
-<div className="grid grid-cols-1 gap-8">
-<div className="space-y-2">
-<label className="block text-sm font-semibold text-on-surface ml-1">Campaign Title</label>
-<input className="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary transition-all text-on-surface placeholder:text-outline/50" placeholder="e.g. Meme Masterclass 2024" type="text"/>
-</div>
-<div className="space-y-2">
-<label className="block text-sm font-semibold text-on-surface ml-1">Mission Description</label>
-<textarea className="w-full bg-surface-container-low border-none rounded-xl p-4 focus:ring-2 focus:ring-primary transition-all text-on-surface placeholder:text-outline/50" placeholder="Describe what participants need to do to win..." rows={4}></textarea>
-</div>
-</div>
+<CreateCampaignForm />
 </section>
 {/* Step 2: Channel (Progressive Disclosure) */}
 <section className="bg-surface-container-low rounded-xl p-8 transition-all hover:bg-surface-container transition-all">

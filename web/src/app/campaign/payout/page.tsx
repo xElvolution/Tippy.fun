@@ -1,8 +1,13 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { PayWinnerForm } from '@/components/PayWinnerForm';
 
 export default function CampaignPayoutPage() {
   return (
     <div className="space-y-12">
+      <Suspense fallback={<div className="text-on-surface-variant text-sm">Loading payout…</div>}>
+        <PayWinnerForm />
+      </Suspense>
       <div className="max-w-3xl rounded-xl border border-outline-variant/25 bg-surface-container-low px-5 py-4 text-sm text-on-surface-variant leading-relaxed space-y-3">
         <p>
           <strong className="text-on-surface">Participants usually claim rewards in the app where the campaign runs</strong> — open the campaign in{' '}

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { SiteFooter } from '@/components/SiteFooter';
 import { getPublicCampaign, PUBLIC_CAMPAIGNS } from '@/lib/publicCampaigns';
 import { CampaignRulesBody } from '../CampaignRulesBody';
+import { TipPanel } from '@/components/TipPanel';
 
 export function generateStaticParams() {
   return PUBLIC_CAMPAIGNS.map((c) => ({ slug: c.slug }));
@@ -137,13 +138,10 @@ export default async function PublicCampaignDetailPage({ params }: { params: Pro
               </div>
             </div>
 
-            <button
-              type="button"
-              id="participate"
-              className="primary-gradient w-full scroll-mt-28 rounded-2xl py-4 text-base font-bold shadow-[0_10px_28px_rgba(107,56,212,0.25)] transition-opacity hover:opacity-95"
-            >
-              Participate now
-            </button>
+            <div id="participate" className="scroll-mt-28 rounded-3xl border border-outline-variant/25 bg-surface-container-lowest p-6 shadow-sm dark:border-outline-variant/35 dark:bg-surface-container-low">
+              <h3 className="font-headline text-lg font-bold text-on-surface mb-4">Participate</h3>
+              <TipPanel campaignId={null} demoLabel="Participate now" />
+            </div>
 
             <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-outline-variant/20 py-5 sm:flex-row sm:gap-4 sm:py-4 dark:border-outline-variant/30">
               <div className="flex -space-x-3">

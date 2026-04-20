@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 import { publicDocsUrl, publicExplorerUrl } from '@/lib/siteLinks';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 
 /**
  * Paths that use public/marketing chrome only (no workspace sidebar or slide-out dashboard nav).
@@ -377,12 +378,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </div>
               ) : null}
             </div>
-            <button
-              type="button"
-              className="hero-gradient text-on-primary px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all"
-            >
-              Connect wallet
-            </button>
+            <ConnectWalletButton />
           </div>
         </header>
 

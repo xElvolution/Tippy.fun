@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { SiteFooter } from '@/components/SiteFooter';
 import { PUBLIC_CAMPAIGNS } from '@/lib/publicCampaigns';
 import { ExploreBountiesGrid } from './ExploreBountiesGrid';
+import { OnChainCampaignsStrip } from '@/components/OnChainCampaignsStrip';
 
 export default function PublicCampaignExplorePage() {
   return (
@@ -39,6 +40,7 @@ export default function PublicCampaignExplorePage() {
           </div>
         </div>
 
+        <OnChainCampaignsStrip />
         <ExploreBountiesGrid campaigns={PUBLIC_CAMPAIGNS} />
       </main>
       <SiteFooter />
