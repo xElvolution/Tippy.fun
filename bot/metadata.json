@@ -1,0 +1,8 @@
+{
+  "name": "Tippy",
+  "description": "A web companion for the Tippy Discord bot on Conflux eSpace. Manage custodial wallets, tip community members, and configure project points and airdrops.",
+  "requestFramePermissions": [
+    "clipboard-read",
+    "clipboard-write"
+  ]
+}

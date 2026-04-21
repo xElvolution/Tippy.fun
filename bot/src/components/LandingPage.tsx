@@ -1,0 +1,333 @@
+'use client';
+
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { motion } from 'motion/react';
+import { Shield, UserPlus, Landmark, Heart, Stars, Sun, Moon, Twitter, ExternalLink, MessageCircle, BookOpen, Plus } from 'lucide-react';
+import { getDiscordInviteUrl } from '@lib/discordInvite';
+import {
+  publicCommunityDiscordUrl,
+  publicExplorerHomeUrl,
+  publicConfluxXUrl,
+  publicLearnUrl,
+} from '@/lib/publicSiteLinks';
+import { Button, Card } from './UI';
+import { TippyLogoLink } from './TippyLogoLink';
+
+export const LandingPage = ({
+  authError,
+  onDiscordLogin,
+  theme,
+  toggleTheme,
+  openAppButton,
+}: {
+  authError?: string | null;
+  onDiscordLogin: () => void;
+  theme: 'dark' | 'light';
+  toggleTheme: () => void;
+  /** When signed in elsewhere, show e.g. “Open app” instead of Discord login on primary CTAs */
+  openAppButton?: { label: string; onClick: () => void };
+}) => {
+  const discordInviteUrl = getDiscordInviteUrl();
+  const primaryCtaLabel = openAppButton?.label ?? 'Log in with Discord';
+  const primaryCtaAction = openAppButton?.onClick ?? onDiscordLogin;
+
+  return (
+    <div className="min-h-screen">
+      <nav className="fixed top-0 left-0 right-0 z-[100] px-8 py-6 flex items-center justify-between backdrop-blur-md bg-background/50 border-b border-outline-variant/10">
+        <TippyLogoLink
+          markSize={32}
+          wordmarkClassName="font-headline font-black text-xl tracking-tighter text-on-surface"
+          className="rounded-lg -m-1 p-1 hover:opacity-90 transition-opacity"
+          priority
+        />
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all"
+          >
+            {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
+          </button>
+          {discordInviteUrl ? (
+            <Button variant="outline" href={discordInviteUrl} className="hidden sm:flex px-4 py-2.5 text-sm">
+              Add to Discord
+            </Button>
+          ) : (
+            <span
+              className="hidden sm:inline text-xs text-on-surface-variant/60 max-w-[10rem] text-right"
+              title="Set NEXT_PUBLIC_DISCORD_CLIENT_ID or NEXT_PUBLIC_DISCORD_INVITE_URL in .env.local"
+            >
+              Add to Discord (set env)
+            </span>
+          )}
+          <Button className="px-4 py-2.5 text-sm md:px-6" onClick={primaryCtaAction}>
+            {primaryCtaLabel}
+          </Button>
+        </div>
+      </nav>
+
+      <section className="relative hero-gradient px-8 pt-32 pb-40 text-center overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl mx-auto space-y-10 relative z-10"
+        >
+          {authError === 'OAuthCallback' ? (
+            <Card className="p-5 text-left border-error/30 bg-error-container/10 max-w-2xl mx-auto">
+              <p className="font-headline font-bold text-error mb-2">Discord sign-in failed (OAuthCallback)</p>
+              <p className="text-sm text-on-surface-variant leading-relaxed">
+                Discord refused the login handshake. Fix these in order: (1){' '}
+                <strong className="text-on-surface">DISCORD_CLIENT_SECRET</strong> must be the value from Developer Portal →{' '}
+                <strong className="text-on-surface">OAuth2 → General → Client Secret</strong> - not your bot token. Re-copy with no
+                spaces. (2) Redirect URL must include exactly{' '}
+                <code className="text-xs bg-surface-container-high px-1 py-0.5 rounded">http://localhost:3000/api/auth/callback/discord</code>{' '}
+                (same host as <code className="text-xs bg-surface-container-high px-1 py-0.5 rounded">NEXTAUTH_URL</code>). (3) Restart{' '}
+                <code className="text-xs bg-surface-container-high px-1 py-0.5 rounded">pnpm dev</code> after editing{' '}
+                <code className="text-xs bg-surface-container-high px-1 py-0.5 rounded">.env</code>. For the exact Discord error line in
+                the terminal, add{' '}
+                <code className="text-xs bg-surface-container-high px-1 py-0.5 rounded">NEXTAUTH_DEBUG=true</code>.
+              </p>
+            </Card>
+          ) : null}
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/10 text-primary font-medium text-xs tracking-wider uppercase">
+            Built for Conflux eSpace
+          </div>
+          <h1 className="text-5xl md:text-7xl font-headline font-extrabold tracking-tight leading-[1.1] text-on-surface">
+            Tip CFX & earn project points <span className="text-primary">directly in Discord</span>
+          </h1>
+          <p className="text-on-surface-variant text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+            The fastest way to reward community contributors and participate in ecosystem drops without leaving your server.
+          </p>
+          <p className="text-on-surface-variant/80 text-sm max-w-md mx-auto">
+            The web dashboard uses <span className="text-on-surface font-semibold">Discord only</span> - same account as the bot. No separate sign-up.
+          </p>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 pt-4">
+            {discordInviteUrl ? (
+              <Button href={discordInviteUrl} className="px-10 py-4 text-lg">
+                Add to Discord
+              </Button>
+            ) : (
+              <Button disabled className="px-10 py-4 text-lg" title="Set NEXT_PUBLIC_DISCORD_CLIENT_ID in .env.local">
+                Add to Discord
+              </Button>
+            )}
+            <Button variant="secondary" className="px-10 py-4 text-lg" onClick={primaryCtaAction}>
+              {primaryCtaLabel}
+            </Button>
+          </div>
+        </motion.div>
+
+        <div className="absolute top-1/2 left-0 w-64 h-64 bg-primary/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-tertiary-container/10 blur-[150px] rounded-full" />
+      </section>
+
+      <section className="py-12 bg-surface-container-lowest border-y border-outline-variant/10">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 opacity-80">
+            <div className="flex items-center gap-3">
+              <Shield className="text-primary" size={24} />
+              <p className="text-xs font-bold tracking-wide uppercase text-on-surface-variant">Sovereign Custody</p>
+            </div>
+            <p className="text-center md:text-left text-on-surface-variant max-w-2xl text-sm italic">
+              &quot;Tippy uses a custodial model to enable instant tipping within Discord. Your funds are held in per-user
+              Conflux eSpace addresses managed by Tippy - see our policy for details.&quot;
+            </p>
+            <div className="flex items-center gap-4">
+              <span className="text-primary font-bold">Conflux</span>
+              <div className="h-4 w-[1px] bg-outline-variant/40" />
+              <span className="text-on-surface-variant text-sm font-medium">Verified Safety</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-32 px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-20 text-center md:text-left">
+            <h2 className="text-4xl font-headline font-bold mb-4">Master Tippy in seconds</h2>
+            <p className="text-on-surface-variant max-w-xl">A seamless bridge between your community interactions and your on-chain assets.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: UserPlus,
+                title: '1. Log in',
+                desc: 'Open the dashboard with Discord. Your Tippy Conflux eSpace wallet is created when you /register in the server - no private keys in Discord.',
+              },
+              {
+                icon: Landmark,
+                title: '2. Deposit',
+                desc: 'Send CFX or supported ERC-20 tokens to your dedicated Tippy deposit address to fund your wallet.',
+              },
+              {
+                icon: Heart,
+                title: '3. Tip',
+                desc: 'Use /tip @user [amount] [token] to reward anyone in the chat with on-chain settlement.',
+              },
+              {
+                icon: Stars,
+                title: '4. Earn',
+                desc: 'Active members earn capped project points and can participate in configured airdrop rules.',
+              },
+            ].map((step, i) => (
+              <Card key={i} hover className="p-8">
+                <div className="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center mb-6 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                  <step.icon size={32} />
+                </div>
+                <h3 className="text-xl font-bold mb-3 font-headline">{step.title}</h3>
+                <p className="text-on-surface-variant leading-relaxed text-sm">{step.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 lg:py-32 bg-surface-container-low overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8">
+          <div className="mb-12 lg:mb-16 flex flex-col gap-5 md:flex-row md:items-center md:justify-between md:gap-10">
+            <div className="min-w-0 text-center md:text-left">
+              <span className="font-headline font-bold tracking-wider uppercase text-[0.6875rem] text-primary mb-3 md:mb-4 block">
+                Ecosystem Assets
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-headline font-bold tracking-tight">Supported Tokens</h2>
+            </div>
+            <p className="text-on-surface-variant text-sm sm:text-base max-w-md mx-auto md:mx-0 md:max-w-sm md:text-right leading-relaxed md:shrink-0">
+              Tip assets on Conflux eSpace using the same simple flow across rails.
+            </p>
+          </div>
+
+          <div className="flex flex-nowrap md:flex-wrap justify-start md:justify-center items-stretch gap-5 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-visible no-scrollbar pb-1 md:pb-0 snap-x snap-mandatory md:snap-none">
+            {[
+              {
+                name: 'Conflux',
+                symbol: 'CFX',
+                type: 'NATIVE',
+                img: 'https://assets.coingecko.com/coins/images/13079/large/Conflux_logo.png',
+              },
+              {
+                name: 'Tether',
+                symbol: 'USDT',
+                type: 'ERC-20',
+                img: 'https://assets.coingecko.com/coins/images/325/large/Tether.png',
+              },
+              {
+                name: 'Your token',
+                symbol: 'ERC-20',
+                type: 'WATCHLIST',
+                img: 'https://assets.coingecko.com/coins/images/12504/large/uniswap-uni.png',
+              },
+            ].map((asset, i) => (
+              <div
+                key={i}
+                className="flex-none w-[min(16rem,calc(100vw-3rem))] sm:w-64 snap-start glass-card p-6 rounded-2xl border border-outline-variant/10 flex flex-col"
+              >
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-primary/20 overflow-hidden shrink-0 bg-surface-container-high ring-1 ring-outline-variant/15">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={asset.img}
+                    alt={`${asset.name} logo`}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-contain p-1.5"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div className="flex justify-between items-start gap-3 mb-2">
+                  <h4 className="text-lg font-bold font-headline leading-tight">{asset.name}</h4>
+                  <span className="shrink-0 text-[0.6875rem] font-bold tracking-tighter text-primary px-2 py-0.5 bg-primary/10 rounded">
+                    {asset.type}
+                  </span>
+                </div>
+                <p className="text-on-surface-variant text-sm font-medium">{asset.symbol}</p>
+              </div>
+            ))}
+            <div className="flex-none w-[min(16rem,calc(100vw-3rem))] sm:w-64 snap-start glass-card p-6 rounded-2xl border border-outline-variant/10 opacity-50 flex flex-col items-center justify-center text-center min-h-[11rem] md:min-h-0">
+              <Plus className="text-outline mb-4 shrink-0" size={32} />
+              <h4 className="text-lg font-bold font-headline">And More</h4>
+              <p className="text-on-surface-variant text-sm font-medium mt-1">New listings weekly</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-32 px-8">
+        <div className="max-w-5xl mx-auto rounded-3xl bg-primary-container p-12 md:p-20 text-center relative overflow-hidden">
+          <div className="relative z-10">
+            <h2 className="text-4xl md:text-5xl font-headline font-extrabold text-on-primary-container mb-8">
+              Ready to boost your community engagement?
+            </h2>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {discordInviteUrl ? (
+                <Button href={discordInviteUrl} className="px-12 py-5 text-xl">
+                  Add to your server
+                </Button>
+              ) : null}
+              <Button variant={discordInviteUrl ? 'secondary' : 'primary'} onClick={primaryCtaAction} className="px-12 py-5 text-xl">
+                {primaryCtaLabel}
+              </Button>
+            </div>
+            <p className="mt-8 text-on-primary-container/70 font-medium">Join Discord communities building on Conflux.</p>
+          </div>
+          <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_70%_30%,#adc7ff_0%,transparent_50%)]" />
+        </div>
+      </section>
+
+      <footer className="bg-surface-container-lowest w-full py-12 px-8 border-t border-outline-variant/10 opacity-80">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex flex-col items-center md:items-start gap-2">
+            <Link
+              href="/landing"
+              className="flex items-center gap-2 font-headline font-black text-on-surface text-xl hover:text-primary transition-colors"
+            >
+              <Image src="/logo.png" alt="" width={28} height={28} className="object-contain rounded-md shrink-0" />
+              Tippy
+            </Link>
+            <p className="text-xs font-medium text-on-surface-variant/40">© {new Date().getFullYear()} Tippy. Built for Conflux eSpace.</p>
+          </div>
+          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
+            <a
+              href={publicExplorerHomeUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-medium text-on-surface-variant/60 hover:text-primary transition-colors"
+            >
+              <ExternalLink size={16} />
+              Conflux explorer
+            </a>
+            <a
+              href={publicLearnUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-medium text-on-surface-variant/60 hover:text-primary transition-colors"
+            >
+              <BookOpen size={16} />
+              Learn
+            </a>
+            <a
+              href={publicCommunityDiscordUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-medium text-on-surface-variant/60 hover:text-primary transition-colors"
+            >
+              <MessageCircle size={16} />
+              Discord
+            </a>
+            <a
+              href={publicConfluxXUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-medium text-on-surface-variant/60 hover:text-primary transition-colors"
+            >
+              <Twitter size={16} />
+              Conflux on X
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
