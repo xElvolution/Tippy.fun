@@ -108,9 +108,8 @@ the **Privy partner integration**.
 
 ## Team
 
-- _Fill in your team below before submission._
-- Member 1 — GitHub: `@username` — Discord: `username#0001`
-- Member 2 — GitHub: `@username` — Discord: `username#0001`
+- Elvolution — GitHub: `xElvolution` — Discord: `Elvolution#9060`
+
 
 ## Problem
 
@@ -264,12 +263,6 @@ pnpm -C web build
   integration is the long-term plan).
 - Organizer-set optional protocol tip (default 0) + sponsor featured slots.
 
-## Demo
-
-- **Live demo**: _add after Vercel deploy_
-- **Demo video** (3–5 min): _`projects/tippy/demo/demo-video.mp4`_
-- **Participant intro video** (30–60 s): _`projects/tippy/demo/participant-intro.mp4`_
-- **Screenshots**: _`projects/tippy/demo/screenshots/`_
 
 ## License
 
