@@ -46,6 +46,23 @@ Fill at minimum:
 - `DISCORD_GUILD_ID` (recommended for instant slash commands - see Discord guide §4)
 - `CONFLUX_NETWORK=testnet` and `NEXT_PUBLIC_CONFLUX_NETWORK=testnet` until you are ready for mainnet
 
+### Deployed contracts (Conflux eSpace **testnet**, chainId 71)
+
+| Contract | Address |
+|----------|---------|
+| `MasterTip` | [`0x74Bb048a6176F7B6BdCDbAaC17b66A5e8990EDa2`](https://evmtestnet.confluxscan.io/address/0x74Bb048a6176F7B6BdCDbAaC17b66A5e8990EDa2) |
+| `TestUSDT` (6 decimals) | [`0xA74BD621666292CC34394f1B7964056aF66616d4`](https://evmtestnet.confluxscan.io/address/0xA74BD621666292CC34394f1B7964056aF66616d4) |
+
+Add these to the repo root `.env` (used by both the Tippy web app and the Discord bot):
+
+```bash
+MASTER_TIP_CONTRACT=0x74Bb048a6176F7B6BdCDbAaC17b66A5e8990EDa2
+TEST_ERC20_CONTRACT=0xA74BD621666292CC34394f1B7964056aF66616d4
+TEST_ERC20_DECIMALS=6
+```
+
+Deployment artifact: `contract/hardhat/deployments/confluxESpaceTestnet.json`. Re-run with `pnpm run deploy:contracts` to redeploy.
+
 ## 3. Install & run
 
 ```bash

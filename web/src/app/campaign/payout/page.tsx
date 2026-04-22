@@ -10,12 +10,12 @@ export default function CampaignPayoutPage() {
       </Suspense>
       <div className="max-w-3xl rounded-xl border border-outline-variant/25 bg-surface-container-low px-5 py-4 text-sm text-on-surface-variant leading-relaxed space-y-3">
         <p>
-          <strong className="text-on-surface">Participants usually claim rewards in the app where the campaign runs</strong> — open the campaign in{' '}
+          <strong className="text-on-surface">Participants usually claim rewards in the app where the campaign runs.</strong> Open the campaign in{' '}
           <strong className="text-on-surface">Telegram</strong> or <strong className="text-on-surface">Discord</strong> and follow the bot flow there. This web view is
           mainly for organizers and for linking a payout wallet when you use both channels.
         </p>
         <p>
-          <strong className="text-on-surface">Organizers</strong> run batch payouts from a live campaign — use{' '}
+          <strong className="text-on-surface">Organizers</strong> run batch payouts from a live campaign. Use{' '}
           <Link href="/campaign/judging" className="font-semibold text-primary hover:underline">
             Judging
           </Link>{' '}
@@ -38,7 +38,7 @@ export default function CampaignPayoutPage() {
                 <span className="text-3xl font-bold text-primary">ETH</span>
               </div>
               <p className="mt-4 text-on-surface-variant max-w-md leading-relaxed">
-                If you joined via Telegram or Discord, claim there first — bots guide most winners. Use the wallet fields below when you need to register an on-chain
+                If you joined via Telegram or Discord, claim there first. Bots guide most winners. Use the wallet fields below when you need to register an on-chain
                 address for settlement.
               </p>
               <div className="mt-10 flex flex-wrap gap-4">

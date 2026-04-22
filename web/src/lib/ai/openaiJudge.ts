@@ -58,7 +58,7 @@ export async function runJudge(input: JudgeInput): Promise<JudgeVerdict> {
     input.persona,
   )}\n\nYou will respond with a JSON object: { "score": integer 0-100, "rationale": string (<=500 chars), "flags": string[] }. Never include anything outside that JSON.`;
 
-  const user = `JUDGING CRITERIA (set by the organizer):\n${input.criteria || '(no criteria provided — judge by general quality)'}\n\nSUBMISSION:\nTitle: ${input.submission.title ?? '(none)'}\nContent:\n${input.submission.content}\n\nLinks: ${JSON.stringify(input.submission.links ?? [])}`;
+  const user = `JUDGING CRITERIA (set by the organizer):\n${input.criteria || '(no criteria provided; judge by general quality)'}\n\nSUBMISSION:\nTitle: ${input.submission.title ?? '(none)'}\nContent:\n${input.submission.content}\n\nLinks: ${JSON.stringify(input.submission.links ?? [])}`;
 
   const res = await client().chat.completions.create({
     model: input.model,

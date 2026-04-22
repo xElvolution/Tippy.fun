@@ -5,7 +5,7 @@ import { resolve, dirname } from 'path';
 /**
  * Deploys the TippyMaker registry. On testnet networks we additionally deploy two mock ERC-20s
  * (tUSDT0 and tAxCNH) so judges can click through the ERC-20 payout flow without needing real
- * USDT0 / AxCNH balances. On mainnet we skip the mocks — real addresses come from env.
+ * USDT0 / AxCNH balances. On mainnet we skip the mocks; real addresses come from env.
  */
 async function main() {
   const [deployer] = await ethers.getSigners();

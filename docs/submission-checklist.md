@@ -1,4 +1,4 @@
-# Global Hackfest 2026 — Tippy submission checklist
+# Global Hackfest 2026: Tippy submission checklist
 
 Track the items the hackfest rules require. Check each off as you complete it.
 
@@ -8,7 +8,7 @@ Track the items the hackfest rules require. Check each off as you complete it.
 - [x] Built in the hackathon window.
 - [x] Uses Conflux in a real way (non-custodial on-chain campaign escrow on eSpace).
 - [ ] Team of 1–5, all registered (fill in team in `README.md`).
-- [x] Own work (generated/assisted code properly attributed — see Acknowledgments).
+- [x] Own work (generated/assisted code properly attributed; see Acknowledgments).
 
 ## Repo
 
@@ -43,7 +43,7 @@ Track the items the hackfest rules require. Check each off as you complete it.
 - [ ] Optional +5 pts: grant proposal on the
       [Conflux Forum](https://forum.conflux.fun/c/English/grant-proposals).
 - [ ] Submission PR to `conflux-fans/global-hackfest-2026` with `/projects/tippy/` folder
-      (scaffolded at `projects/tippy/` — paste `SUBMISSION.md` into the PR body), including
+      (scaffolded at `projects/tippy/`; paste `SUBMISSION.md` into the PR body), including
       links to the Electric Capital PR and the social post.
 
 ## Technical (per submission guide)

@@ -67,7 +67,7 @@ export const commandData = [
  * Registers **global** slash commands, then clears per-guild command overrides in every server
  * we can see (so `/ping` etc. do not appear twice). Discord merges global + guild definitions.
  *
- * @param guildIdsToClear — from `client.guilds.cache` when the bot is connected (best).
+ * @param guildIdsToClear from `client.guilds.cache` when the bot is connected (best).
  *   If omitted or empty, uses `GET /users/@me/guilds` (may be empty for some bot tokens).
  */
 export async function registerSlashCommands(

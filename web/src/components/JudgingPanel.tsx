@@ -169,7 +169,7 @@ export function JudgingPanel({ campaignId }: Props) {
                 winnerAddress: w.address,
                 amount: w.amount,
               })),
-              payoutNote: `Panel verdict — ${winners.length} winner(s)`,
+              payoutNote: `Panel verdict: ${winners.length} winner(s)`,
             }),
           },
         );
@@ -182,7 +182,7 @@ export function JudgingPanel({ campaignId }: Props) {
             submissionId: w.submissionId,
           })),
           verdictHash: plan.plan.verdict_hash,
-          payoutNote: `Panel verdict — ${winners.length} winner(s)`,
+          payoutNote: `Panel verdict: ${winners.length} winner(s)`,
         });
         setSettleTx(hash);
         await authedFetch('/api/judging/plan', {
@@ -276,7 +276,7 @@ export function JudgingPanel({ campaignId }: Props) {
             rel="noopener noreferrer"
             className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
           >
-            Settlement broadcast — view on ConfluxScan
+            Settlement broadcast. View on ConfluxScan
             <span className="material-symbols-outlined text-sm">open_in_new</span>
           </a>
         ) : null}

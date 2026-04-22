@@ -121,7 +121,7 @@ export function CampaignSubmissionsClient() {
                       <StatusPill status={s.status} />
                     </span>
                     <span className="col-span-1 text-right font-headline font-bold">
-                      {s.score ?? '—'}
+                      {s.score ?? '-'}
                     </span>
                   </div>
                 ))}

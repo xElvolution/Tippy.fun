@@ -4,7 +4,7 @@ let cached: SupabaseClient | null = null;
 
 /**
  * Server-side Supabase client, uses the service role key and therefore bypasses RLS.
- * Only import from route handlers / server components — NEVER from client components.
+ * Only import from route handlers / server components. NEVER from client components.
  */
 export function supabaseAdmin(): SupabaseClient {
   if (cached) return cached;

@@ -126,7 +126,7 @@ export async function GET(req: NextRequest) {
         }
       }
 
-      const ticker = curs[0]?.symbol ?? '—';
+      const ticker = curs[0]?.symbol ?? '-';
       return {
         id: e.id,
         name: e.name,

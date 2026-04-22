@@ -7,7 +7,7 @@ lives on-chain. Organizers spin up a campaign in two clicks, pick the prize toke
 AxCNH), set the AI rubric, and participants submit work straight from the site. A panel of
 OpenAI-powered judges plus an AI arbiter scores every entry; the arbiter's verdict hash is
 written on-chain on [Conflux eSpace](https://doc.confluxnetwork.org/docs/espace/Overview), and
-rewards are either queued for winners to claim or paid out instantly — with zero custodian in
+rewards are either queued for winners to claim or paid out instantly, with zero custodian in
 the middle.
 
 ## Two modes, one contract
@@ -21,13 +21,13 @@ the organizer creates a campaign they pick one of two modes:
 - AI judging produces a ranked list; the organizer publishes winners with `settleWinners`.
 - Each winner has a personal entitlement they call `claim` on before the deadline.
 - Anything unclaimed by the deadline can be reclaimed by the organizer with `reclaimUnclaimed`
-  — funds are never stuck and never move without the winner's explicit tx.
+  Funds are never stuck and never move without the winner's explicit tx.
 
 ### 2. Tip / Always-on mode (auto-pay)
 
 - Organizer fixes a reward-per-submission and a pass threshold.
 - Participants submit; the AI panel scores, the arbiter decides pass/fail.
-- On `pass`, the contract **transfers the reward instantly** to the submitter via `payTip` —
+- On `pass`, the contract **transfers the reward instantly** to the submitter via `payTip`,
   no claim step, no human in the loop. Perfect for always-on tip jars / content contests.
 
 Both modes share the same AI pipeline and the same on-chain audit surface.
@@ -35,7 +35,7 @@ Both modes share the same AI pipeline and the same on-chain audit surface.
 ## How AI judging works
 
 1. Organizer writes the **criteria** and picks a **judge panel** (today: three OpenAI models
-   with different personas — strict technical reviewer, creative reviewer, rubric-follower).
+   with different personas: strict technical reviewer, creative reviewer, rubric-follower).
 2. When they hit **Run AI judging**, `/api/judging/run` dispatches each submission to every
    judge concurrently. Each verdict (score 0-100 + rationale) is stored in Supabase.
 3. An **AI arbiter** (OpenAI) receives all three verdicts and produces the final aggregated
@@ -52,13 +52,13 @@ Both modes share the same AI pipeline and the same on-chain audit surface.
 ## Conflux integration
 
 - **Space**: Conflux eSpace (EVM). Mainnet `1030`, testnet `71`.
-- **Contract**: `TippyMaker.sol` — shared non-custodial multi-campaign registry.
+- **Contract**: `TippyMaker.sol`, a shared non-custodial multi-campaign registry.
 - **Native token**: CFX prize pools work with zero extra config.
 - **ERC-20 prizes**: **USDT0** and **AxCNH** are first-class choices in the create flow
   (targets the _Best USDT0_ and _Best AxCNH_ category prizes). The deploy script ships mock
   `TestERC20` contracts on testnet so the full flow is reviewable without real tokens; on
   mainnet set `NEXT_PUBLIC_USDT0_ADDRESS` / `NEXT_PUBLIC_AXCNH_ADDRESS` to the real addresses.
-- **Privy** is the connect/auth partner — email, Google, Twitter, external wallet, plus
+- **Privy** is the connect/auth partner: email, Google, Twitter, external wallet, plus
   embedded wallets for non-crypto users. Server-side we verify the Privy access token before
   touching Supabase.
 - **Explorer**: every payout / tip / verdict deep-links to `evm.confluxscan.io` in the UI.
@@ -108,7 +108,7 @@ the **Privy partner integration**.
 
 ## Team
 
-- Elvolution — GitHub: `xElvolution` — Discord: `Elvolution#9060`
+- Elvolution. GitHub: `xElvolution`. Discord: `Elvolution#9060`
 
 
 ## Problem
@@ -127,18 +127,18 @@ key. No upgrade path.
 
 ## Features
 
-- `TippyMaker.sol` — one non-custodial registry, dual modes, native CFX and ERC-20 (USDT0,
+- `TippyMaker.sol`: one non-custodial registry, dual modes, native CFX and ERC-20 (USDT0,
   AxCNH) prize pools, verdict hash on every payout, events for the whole ledger.
-- AI judging pipeline — configurable panel of OpenAI judges + arbiter, rubric set per
+- AI judging pipeline: configurable panel of OpenAI judges + arbiter, rubric set per
   campaign, full rationales cached in Supabase.
-- Submit-from-site flow — participants post work directly from the campaign page; content is
+- Submit-from-site flow: participants post work directly from the campaign page; content is
   keccak-hashed so `settleWinners` / `payTip` can reference the exact submission.
 - Claim card with countdown for Bounty mode; instant `payTip` panel for Tip mode.
-- Privy connect — email, Google, Twitter, wallet, embedded wallet. Server-side verification
+- Privy connect: email, Google, Twitter, wallet, embedded wallet. Server-side verification
   of the access token before any Supabase write.
-- Live audit strip — `OnChainLedger` rebuilds the whole campaign from `TippyMaker` events so
+- Live audit strip: `OnChainLedger` rebuilds the whole campaign from `TippyMaker` events so
   anyone can independently audit, even if Supabase is down.
-- `/api/indexer` — lightweight server-side indexer that mirrors events into Supabase for
+- `/api/indexer`: lightweight server-side indexer that mirrors events into Supabase for
   social feeds and search.
 
 ## Technology stack
@@ -159,7 +159,7 @@ key. No upgrade path.
 - A Privy application (<https://dashboard.privy.io>) with Conflux eSpace added
 - A Supabase project (<https://supabase.com>)
 - An OpenAI API key
-- A funded wallet on Conflux eSpace testnet — faucet: <https://efaucet.confluxnetwork.org>
+- A funded wallet on Conflux eSpace testnet. Faucet: <https://efaucet.confluxnetwork.org>
 
 ### 1. Install
 
@@ -229,12 +229,12 @@ pnpm -C web build
 
 ## Usage
 
-1. **Connect** via Privy — email / Google / Twitter / wallet.
-2. **Create a campaign** — pick **Bounty** or **Tip** mode, prize token (CFX / USDT0 / AxCNH),
+1. **Connect** via Privy: email / Google / Twitter / wallet.
+2. **Create a campaign**: pick **Bounty** or **Tip** mode, prize token (CFX / USDT0 / AxCNH),
    seed amount, submissions window, and (Bounty) claim deadline. Write the AI rubric. Launch.
-3. **Submit** — participants post work on the campaign's Submissions tab; the app hashes the
+3. **Submit**: participants post work on the campaign's Submissions tab; the app hashes the
    canonical payload so it can be linked on-chain.
-4. **Run AI judging** — organizer opens the Judging tab and clicks **Run AI judging**. Three
+4. **Run AI judging**: organizer opens the Judging tab and clicks **Run AI judging**. Three
    judges + arbiter score every submission. The arbiter's verdict hash is displayed.
 5. **Settle / Pay**:
    - **Bounty mode** → organizer clicks **Publish N winners**. `settleWinners` goes on-chain
@@ -242,21 +242,44 @@ pnpm -C web build
      before the deadline. Anything unclaimed → `reclaimUnclaimed`.
    - **Tip mode** → organizer hits **Pay** next to any passing submission. `payTip` transfers
      the prize instantly from escrow to the submitter's wallet.
-6. **Audit** — `Campaign → Funds` shows the full ledger, rebuilt from `TippyMaker` events.
-7. **Finalize** — when everything is paid out, call `finalize` to close the campaign and
+6. **Audit**: `Campaign → Funds` shows the full ledger, rebuilt from `TippyMaker` events.
+7. **Finalize**: when everything is paid out, call `finalize` to close the campaign and
    return any dust to the organizer. No funds are ever stuck.
 
 ## Smart contracts
 
-- `TippyMaker` — deploy per-chain; address printed by `deploy:testnet` / `deploy:mainnet`.
-- `TestERC20` (mocks) — deployed on testnet only, used for USDT0 / AxCNH demos.
+- `TippyMaker`: deploy per-chain; address printed by `deploy:testnet` / `deploy:mainnet`.
+- `TestERC20` (mocks): deployed on testnet only, used for USDT0 / AxCNH demos.
 - Source: [`contracts/contracts/TippyMaker.sol`](contracts/contracts/TippyMaker.sol)
 - Tests: [`contracts/test/TippyMaker.test.ts`](contracts/test/TippyMaker.test.ts)
+
+### Discord bot contracts (`bot/`)
+
+The Discord bot (see [`bot/`](bot/)) ships its own lightweight `MasterTip` tipping
+contract plus a `TestUSDT` ERC-20 for demos. Both are deployed on **Conflux eSpace
+testnet (chainId 71)**:
+
+| Contract | Address |
+|----------|---------|
+| `MasterTip` | [`0x74Bb048a6176F7B6BdCDbAaC17b66A5e8990EDa2`](https://evmtestnet.confluxscan.io/address/0x74Bb048a6176F7B6BdCDbAaC17b66A5e8990EDa2) |
+| `TestUSDT` (6 decimals) | [`0xA74BD621666292CC34394f1B7964056aF66616d4`](https://evmtestnet.confluxscan.io/address/0xA74BD621666292CC34394f1B7964056aF66616d4) |
+
+Paste into `bot/.env` so the Discord bot and Next.js dashboard pick them up:
+
+```bash
+MASTER_TIP_CONTRACT=0x74Bb048a6176F7B6BdCDbAaC17b66A5e8990EDa2
+TEST_ERC20_CONTRACT=0xA74BD621666292CC34394f1B7964056aF66616d4
+TEST_ERC20_DECIMALS=6
+```
+
+Sources: [`bot/contract/hardhat/contracts/MasterTip.sol`](bot/contract/hardhat/contracts/MasterTip.sol),
+[`bot/contract/hardhat/contracts/TestUSDT.sol`](bot/contract/hardhat/contracts/TestUSDT.sol).
+Redeploy with `pnpm --dir bot run deploy:contracts`.
 
 ## Roadmap
 
 - Discord + Telegram bot entrypoints so participants can submit from community chats (the web
-  submit flow + hashing is a drop-in for the bots — this repo ships the web-only MVP).
+  submit flow + hashing is a drop-in for the bots. This repo ships the web-only MVP).
 - Additional AI providers (Anthropic, Google, local models) in the judging panel.
 - Conflux `SponsorWhitelistControl` → zero-gas tipping / claiming for participants.
 - On-chain campaign search via an indexer service (Supabase cache is v1; a subgraph / Goldsky
@@ -266,7 +289,7 @@ pnpm -C web build
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
 
 ## Acknowledgments
 

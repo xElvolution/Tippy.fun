@@ -1,5 +1,5 @@
 -- Existing deployments: rename custody column from Injective (bech32) to Conflux eSpace (0x).
--- New installs that only ran 001_initial.sql already have evm_address — this is a no-op when the old column is absent.
+-- New installs that only ran 001_initial.sql already have evm_address; this is a no-op when the old column is absent.
 
 DO $$
 BEGIN

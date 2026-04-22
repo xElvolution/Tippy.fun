@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 
 let cached: PrivyClient | null = null;
 
-function getPrivyClient(): PrivyClient {
+export function getPrivyClient(): PrivyClient {
   if (cached) return cached;
   const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
   const secret = process.env.PRIVY_APP_SECRET;
@@ -38,6 +38,53 @@ export async function requireAuth(req: NextRequest): Promise<AuthedUser> {
       401,
     );
   }
+}
+
+export type LinkedSocial = {
+  subject: string;
+  handle: string | null;
+};
+
+export type ResolvedPrivyUser = {
+  privyId: string;
+  walletAddress: string | null;
+  twitter: LinkedSocial | null;
+  discord: LinkedSocial | null;
+};
+
+type PrivyLinkedAccount = {
+  type: string;
+  address?: string;
+  walletClientType?: string;
+  username?: string;
+  name?: string;
+  subject?: string;
+};
+
+/**
+ * Fetches the user's linked accounts from Privy and returns the first wallet
+ * plus Twitter / Discord handles when present. Falls back to null fields when
+ * a user hasn't linked that account yet.
+ */
+export async function resolvePrivyUser(privyId: string): Promise<ResolvedPrivyUser> {
+  const client = getPrivyClient();
+  const user = await client.getUserById(privyId);
+  const accounts = (user?.linkedAccounts ?? []) as PrivyLinkedAccount[];
+
+  const wallet = accounts.find((a) => a.type === 'wallet' && a.address);
+  const twitter = accounts.find((a) => a.type === 'twitter_oauth');
+  const discord = accounts.find((a) => a.type === 'discord_oauth');
+
+  return {
+    privyId,
+    walletAddress: wallet?.address ?? null,
+    twitter: twitter
+      ? { subject: twitter.subject ?? privyId, handle: twitter.username ?? twitter.name ?? null }
+      : null,
+    discord: discord
+      ? { subject: discord.subject ?? privyId, handle: discord.username ?? discord.name ?? null }
+      : null,
+  };
 }
 
 export class AuthError extends Error {

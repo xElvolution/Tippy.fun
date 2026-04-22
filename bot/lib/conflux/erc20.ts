@@ -4,7 +4,7 @@ import { getPublicClient } from './client';
 import { erc20Abi } from './erc20Abi';
 import { formatTokenHumanFromRaw } from './formatBalance';
 
-/** Optional dashboard token (e.g. test USDT) — set `TEST_ERC20_CONTRACT` (0x…). */
+/** Optional dashboard token (e.g. test USDT); set `TEST_ERC20_CONTRACT` (0x…). */
 export function optionalTestErc20Address(): string | null {
   const raw = process.env.TEST_ERC20_CONTRACT?.trim();
   if (raw === '') return null;

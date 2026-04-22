@@ -81,7 +81,7 @@ export function SiteFooter() {
         <div className="mt-12 flex flex-col gap-4 border-t border-outline-variant/20 pt-8 sm:flex-row sm:items-center sm:justify-between dark:border-outline-variant/30">
           <p className="text-sm text-on-surface-variant">© {new Date().getFullYear()} Tippy.Fun. All rights reserved.</p>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-on-surface-variant">
-            <span className="text-on-surface-variant/70">Privacy &amp; terms — coming soon</span>
+            <span className="text-on-surface-variant/70">Privacy &amp; terms: coming soon</span>
             <Link href="/" className={linkClass}>
               Home
             </Link>

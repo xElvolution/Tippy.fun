@@ -117,7 +117,7 @@ function buildHoldingRows(d: MeDashboardData): HoldingRow[] {
   return rows;
 }
 
-/** Uses dashboard `network` from the API — Conflux Scan (eSpace). */
+/** Uses dashboard `network` from the API. Conflux Scan (eSpace). */
 function transactionExplorerUrlClient(network: string | undefined, txHash: string): string | undefined {
   if (!txHash || txHash === '-') return undefined;
   const net = (network ?? 'testnet').toLowerCase();

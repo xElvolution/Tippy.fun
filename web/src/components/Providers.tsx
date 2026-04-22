@@ -37,7 +37,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <PrivyProvider
       appId={appId}
       config={{
-        loginMethods: ['wallet', 'email', 'google', 'twitter'],
+        loginMethods: ['wallet', 'email', 'google', 'twitter', 'discord'],
         defaultChain: activeChain,
         supportedChains: [confluxEspaceTestnet, confluxEspace],
         embeddedWallets: {

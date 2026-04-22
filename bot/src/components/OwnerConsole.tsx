@@ -27,7 +27,7 @@ function projectsForFullCsvExport(ecosystems: ConsoleEcosystem[], guildOptions: 
       byId.set(g.id, {
         id: g.id,
         name: g.name,
-        ticker: '—',
+        ticker: '-',
         members: null,
         pointsIssued: '0',
         activeCampaigns: 0,
@@ -210,7 +210,7 @@ export const OwnerConsole = () => {
         masterTipError?: string | null;
       };
       if (!res.ok) throw new Error(j.error || res.statusText);
-      let m = `Created **${j.currency?.name}** (${j.currency?.symbol}) — saved in Supabase.`;
+      let m = `Created **${j.currency?.name}** (${j.currency?.symbol}). Saved in Supabase.`;
       if (j.masterTipTx) {
         m += ` MasterTip tx \`${j.masterTipTx}\`.`;
       } else if (j.masterTipError) {
@@ -384,7 +384,7 @@ export const OwnerConsole = () => {
         ? {
             id: manageGuildId,
             name: manageName,
-            ticker: '—',
+            ticker: '-',
             members: null,
             pointsIssued: '0',
             activeCampaigns: 0,
@@ -575,7 +575,7 @@ export const OwnerConsole = () => {
       ? formatCompactCount(stats.aggregatedMembers)
       : stats.aggregatedMembersKnown
         ? stats.aggregatedMembers.toLocaleString()
-        : '—';
+        : '-';
   const membersSub = stats.aggregatedMembersKnown
     ? `${stats.serverCount} server(s) with bot member counts`
     : stats.serverCount > 0
@@ -657,7 +657,7 @@ export const OwnerConsole = () => {
           <div className="flex flex-col items-stretch sm:items-end gap-2">
             {airdropDevVisible ? (
               <p className="text-sm text-tertiary font-medium text-right max-w-md">
-                Airdrop is still in development — check back soon.
+                Airdrop is still in development. Check back soon.
               </p>
             ) : null}
             <div className="flex flex-wrap gap-4 justify-end">
@@ -752,7 +752,7 @@ export const OwnerConsole = () => {
                 <div>
                   <p className="text-outline text-[10px] font-bold uppercase tracking-widest mb-1">Members</p>
                   <p className="text-2xl font-bold font-headline text-on-surface">
-                    {project.members != null ? project.members.toLocaleString() : '—'}
+                    {project.members != null ? project.members.toLocaleString() : '-'}
                   </p>
                 </div>
                 <div>

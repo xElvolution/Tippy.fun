@@ -74,7 +74,7 @@ export function CampaignOverviewClient() {
   const claimAt =
     campaign.claimDeadline > 0n
       ? new Date(Number(campaign.claimDeadline) * 1000).toLocaleString()
-      : '—';
+      : '-';
 
   return (
     <section className="space-y-6">
@@ -118,14 +118,12 @@ export function CampaignOverviewClient() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
         <InfoBlock label="Organizer">
-          <a
-            href={explorerAddressUrl(campaign.organizer)}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={`/u/${campaign.organizer}`}
             className="font-mono font-bold text-primary hover:underline"
           >
             {shortAddress(campaign.organizer, 6)}
-          </a>
+          </Link>
         </InfoBlock>
         <InfoBlock label="Channel">
           <span className="text-on-surface capitalize">{channel}</span>

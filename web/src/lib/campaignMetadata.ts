@@ -1,7 +1,7 @@
 /**
  * Off-chain metadata schema for a Tippy campaign. Stored at the URI referenced by the contract
  * (IPFS, https, or a data: URL for small demo payloads). Keeping this tiny so the demo can inline
- * the JSON as a data URL — no IPFS dependency required to get a live demo on-chain.
+ * the JSON as a data URL. No IPFS dependency required to get a live demo on-chain.
  */
 
 export type JudgeModelChoice = {

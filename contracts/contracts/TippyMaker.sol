@@ -210,7 +210,7 @@ contract TippyMaker {
             c.totalFunded += seedAmount;
             emit Funded(id, msg.sender, seedAmount);
         } else if (msg.value != 0) {
-            // User sent CFX but passed seedAmount=0 — reject to avoid stuck funds.
+            // User sent CFX but passed seedAmount=0: reject to avoid stuck funds.
             revert NativeValueNotAllowed();
         }
     }
@@ -366,7 +366,7 @@ contract TippyMaker {
 
     /// @notice Organizer closes the campaign and sweeps the remaining pool back to themselves.
     ///         For Bounty mode this requires the claim deadline to have passed *or* all
-    ///         entitlements to be cleared — otherwise winners could be robbed of their prize.
+    ///         entitlements to be cleared; otherwise winners could be robbed of their prize.
     function finalize(uint256 id) external exists(id) onlyOrganizer(id) {
         Campaign storage c = _campaigns[id];
         if (c.finalized) revert AlreadyFinalized();

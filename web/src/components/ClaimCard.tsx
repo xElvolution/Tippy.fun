@@ -147,7 +147,7 @@ export function ClaimCard({ campaignId }: Props) {
           rel="noopener noreferrer"
           className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
         >
-          Claim broadcast — view on ConfluxScan
+          Claim broadcast. View on ConfluxScan
           <span className="material-symbols-outlined text-sm">open_in_new</span>
         </a>
       ) : null}

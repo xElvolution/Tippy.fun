@@ -25,7 +25,7 @@ const OPTIONS: {
   {
     mode: 'dark',
     label: 'Dark mode',
-    description: 'Reduced glare — easier in low light and at night.',
+    description: 'Reduced glare. Easier in low light and at night.',
     icon: 'dark_mode',
   },
 ];

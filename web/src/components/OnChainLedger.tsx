@@ -128,7 +128,7 @@ export function OnChainLedger({ campaignId }: { campaignId?: string | number | n
                     </div>
                   </td>
                   <td className="px-6 py-5 text-xs font-mono text-on-surface-variant">
-                    {to ? <>→ {shortAddress(to, 5)}</> : from ? shortAddress(from, 5) : '—'}
+                    {to ? <>→ {shortAddress(to, 5)}</> : from ? shortAddress(from, 5) : '-'}
                   </td>
                   <td className="px-6 py-5 text-right font-headline font-bold text-on-surface tabular-nums">
                     {amount !== undefined ? (
@@ -137,7 +137,7 @@ export function OnChainLedger({ campaignId }: { campaignId?: string | number | n
                         {formatUnits(amount, decimals)} {symbol}
                       </>
                     ) : (
-                      '—'
+                      '-'
                     )}
                   </td>
                   <td className="px-6 py-5 text-right">

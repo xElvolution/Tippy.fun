@@ -1,4 +1,4 @@
-# Tippy.Fun — Go-to-market plan
+# Tippy.Fun: Go-to-market plan
 
 ## Who we're for
 
@@ -6,7 +6,7 @@ Three concentric rings of users, in priority order:
 
 1. **Ecosystem / hackathon teams** who want to run bounties on-chain without building another
    custodial DoraHack clone. Tippy is the reference implementation of "fund, submit, AI-judge,
-   pay — all on-chain." They pay 0 in protocol fees and ship in minutes.
+   pay, all on-chain." They pay 0 in protocol fees and ship in minutes.
 2. **Crypto-native community operators** running Discord / Telegram campaigns today with
    spreadsheets + Google Forms + off-chain payouts. They get a rubric-driven AI panel and an
    always-on Tip mode that auto-pays quality content.
@@ -25,7 +25,7 @@ from opening the site.
 
 ## Why now, why Conflux
 
-- Conflux eSpace gives us cheap EVM transactions with native-CFX settlement — tips / claims
+- Conflux eSpace gives us cheap EVM transactions with native-CFX settlement, so tips / claims
   / payouts stay sub-cent even at scale, which matters when a Tip-mode campaign might fan out
   hundreds of micro-payments a day.
 - **USDT0** and **AxCNH** are both first-class prize tokens in the create flow, unlocking
@@ -76,10 +76,10 @@ from opening the site.
 
 ## Unit economics (post-hackathon)
 
-- **Product stays free** at the contract level — no protocol fee, ever. This is the moat:
+- **Product stays free** at the contract level: no protocol fee, ever. This is the moat:
   anyone can fork Tippy and redeploy; few will, because the social layer (feed, discovery,
   templates, judging history) is where we compound.
-- **Optional organizer tip** on payouts (default 0) — Buy-Me-a-Coffee style.
+- **Optional organizer tip** on payouts (default 0), Buy-Me-a-Coffee style.
 - **Sponsor slots** on the explore page once there's real traffic.
 - **Paid AI-judging credits** once the multi-provider panel is productionized (OpenAI /
   Anthropic / Google costs are the actual pass-through; operators can always BYO API keys for
@@ -105,7 +105,7 @@ from opening the site.
 - [ ] Discord bot parity.
 - [ ] Vercel production, ConfluxScan-verified mainnet contract.
 - [ ] 10 pilot campaigns across Bounty + Tip modes.
-- [ ] USDT0 + AxCNH live on mainnet (config switch only — the product already supports it).
+- [ ] USDT0 + AxCNH live on mainnet (config switch only; the product already supports it).
 
 **60 days**
 

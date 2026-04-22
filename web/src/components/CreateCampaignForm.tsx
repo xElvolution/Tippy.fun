@@ -307,7 +307,7 @@ export function CreateCampaignForm({ className }: Props) {
           className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
         >
           {createdId !== null
-            ? `Campaign #${createdId.toString()} created — view on ConfluxScan`
+            ? `Campaign #${createdId.toString()} created. View on ConfluxScan`
             : 'View transaction on ConfluxScan'}
           <span className="material-symbols-outlined text-sm">open_in_new</span>
         </a>

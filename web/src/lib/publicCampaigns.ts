@@ -26,7 +26,7 @@ export type PublicCampaign = {
   tags: string[];
   location: string;
   organizer: { name: string; abbr: string };
-  /** e.g. 128 — shown on card overlay */
+  /** e.g. 128, shown on card overlay */
   submissionsCount: number;
 };
 
@@ -53,7 +53,7 @@ export const PUBLIC_CAMPAIGNS: PublicCampaign[] = [
       ],
     },
     timeline: [
-      { label: 'Upcoming', dateRight: '—', upcoming: true },
+      { label: 'Upcoming', dateRight: '-', upcoming: true },
       { label: 'Submissions open', dateRight: 'Mar 18, 2026', active: true },
       { label: 'Judging', dateRight: 'Mar 22, 2026' },
       { label: 'Winners announced', dateRight: 'Mar 24, 2026' },
@@ -101,7 +101,7 @@ export const PUBLIC_CAMPAIGNS: PublicCampaign[] = [
       'https://lh3.googleusercontent.com/aida-public/AB6AXuBkn0VoIkBy3s02zh3m_NQhGfqIIIwZtqdBi7MJCZ38Gh-c1H9DYSC4WiS9qYlI5Ip_w7wnVFoKM-qIAISd27h5ys-59MZlpiH7Zlj4nPG8d56lnxpOFIrauMnTbiuVDSDQFaymbxGKL0pkHyWz_fm1TRt9Ae3ZDbTIOmdNKU6ZfsjScmugyxoHjyvWECE-JwPi1ClnMDdPDje6Z5weZvvBlR3VxX4sUshkdbx9fxE8VXj1R5b9DpLbc1_kppIwy3_-sjdf0E1DwIZR',
     imageAlt: 'Alpha testers campaign',
     timeLeft: 'Ending soon',
-    statusLine: 'Ending soon — limited slots',
+    statusLine: 'Ending soon. Limited slots',
     title: 'Alpha Testers',
     shortDescription: 'Be the first to find bugs in our Telegram mini-app and win rewards.',
     longDescription:

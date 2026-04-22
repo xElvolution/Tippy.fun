@@ -70,7 +70,7 @@ export async function buildDiscordWalletBalanceText(params: {
 
   let out = lines.join('\n');
   if (out.length > MAX_CHARS) {
-    out = `${out.slice(0, MAX_CHARS - 40)}\n\n_…truncated — open the web dashboard for the full holdings panel._`;
+    out = `${out.slice(0, MAX_CHARS - 40)}\n\n_…truncated. Open the web dashboard for the full holdings panel._`;
   }
   return out;
 }

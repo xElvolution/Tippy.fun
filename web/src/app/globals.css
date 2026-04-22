@@ -62,7 +62,7 @@ body {
   font-family: var(--font-body);
 }
 
-/* Dark theme — toggled via `html.dark` (ThemeToggle). Reuses same token names as @theme. */
+/* Dark theme. Toggled via `html.dark` (ThemeToggle). Reuses same token names as @theme. */
 html.dark {
   --color-surface: #12131c;
   --color-background: #0a0b10;

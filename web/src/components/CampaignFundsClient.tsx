@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { formatUnits } from 'viem';
 import { OnChainLedger } from '@/components/OnChainLedger';
@@ -26,7 +27,7 @@ export function CampaignFundsClient() {
   const token = campaign?.tokenInfo;
   const symbol = token?.key ?? chain.nativeCurrency.symbol;
   const decimals = token?.decimals ?? 18;
-  const fmt = (v?: bigint) => (v === undefined ? '—' : `${formatUnits(v, decimals)} ${symbol}`);
+  const fmt = (v?: bigint) => (v === undefined ? '-' : `${formatUnits(v, decimals)} ${symbol}`);
 
   return (
     <div className="space-y-8">
@@ -91,21 +92,19 @@ export function CampaignFundsClient() {
               </Row>
               <Row label="Organizer">
                 {campaign ? (
-                  <a
-                    href={explorerAddressUrl(campaign.organizer)}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href={`/u/${campaign.organizer}`}
                     className="font-mono text-primary hover:underline"
                   >
                     {shortAddress(campaign.organizer)}
-                  </a>
+                  </Link>
                 ) : (
-                  <span className="text-on-surface-variant text-xs">—</span>
+                  <span className="text-on-surface-variant text-xs">-</span>
                 )}
               </Row>
               <Row label="Campaign">
                 <span className="font-bold">
-                  {campaign ? `#${campaign.id.toString()}` : '—'}
+                  {campaign ? `#${campaign.id.toString()}` : '-'}
                 </span>
               </Row>
             </div>

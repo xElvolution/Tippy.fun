@@ -210,7 +210,7 @@ export function PayWinnerForm() {
               rel="noopener noreferrer"
               className="md:col-span-2 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
             >
-              Transaction broadcast — view on ConfluxScan
+              Transaction broadcast. View on ConfluxScan
               <span className="material-symbols-outlined text-sm">open_in_new</span>
             </a>
           ) : null}
