@@ -19,11 +19,13 @@ export function publicTelegramUrl(): string {
 
 /**
  * Where the "Install bot" / "Integrations & bots" buttons point.
- * Leave unset to hide those CTAs; set in `.env.local` when the hosted bot page
- * is live.
+ * Defaults to the hosted Tippy Discord bot landing page; override with
+ * `NEXT_PUBLIC_TIPPY_BOT_INSTALL_URL` if you deploy your own fork.
  */
 export function publicBotInstallUrl(): string {
-  return process.env.NEXT_PUBLIC_TIPPY_BOT_INSTALL_URL?.trim() || '';
+  return (
+    process.env.NEXT_PUBLIC_TIPPY_BOT_INSTALL_URL?.trim() || 'https://tippy-fun-bot.vercel.app/'
+  );
 }
 
 /** Active Conflux chain explorer. Never falls back to Etherscan. */

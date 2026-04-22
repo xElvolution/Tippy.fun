@@ -9,6 +9,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import {
+  createPublicClient,
   createWalletClient,
   custom,
   keccak256,
@@ -183,7 +184,7 @@ async function ensureAllowance(opts: {
   const { wallet, token, owner, spender, amount } = opts;
   const chain = getActiveChain();
   const provider = await wallet.getEthereumProvider();
-  const publicRead = createWalletClient({ account: owner, chain, transport: custom(provider) });
+  const publicRead = createPublicClient({ chain, transport: custom(provider) });
   const allowance = (await publicRead.readContract({
     address: token,
     abi: erc20Abi,

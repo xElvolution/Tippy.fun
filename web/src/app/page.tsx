@@ -5,6 +5,7 @@ import { LandingHeroCta } from '@/components/LandingHeroCta';
 import { LandingHeroVisual } from '@/components/LandingHeroVisual';
 import { HowItWorksSection } from '@/components/HowItWorksSection';
 import { MergedCampaignsGrid } from '@/components/MergedCampaignsGrid';
+import { TippyBotCta } from '@/components/TippyBotCta';
 
 export default function LandingPage() {
   return (
@@ -153,6 +154,8 @@ export default function LandingPage() {
           <MergedCampaignsGrid limit={9} />
         </div>
       </section>
+
+      <TippyBotCta />
 
       <SiteFooter />
     </>
