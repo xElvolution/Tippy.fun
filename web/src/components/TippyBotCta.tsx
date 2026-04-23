@@ -37,40 +37,40 @@ export function TippyBotCta() {
   const href = publicBotInstallUrl();
 
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden py-14 sm:py-20 lg:py-24">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-20 left-1/4 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
         <div className="absolute bottom-0 right-1/4 h-72 w-72 rounded-full bg-tertiary/15 blur-3xl" />
       </div>
 
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 xl:px-14">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 xl:px-14">
         <FadeIn>
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-outline-variant/20 bg-gradient-to-br from-primary/10 via-surface-container-lowest to-tertiary/10 p-8 sm:p-12 lg:p-14">
-            <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
-            <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-tertiary/20 blur-3xl" />
+          <div className="relative overflow-hidden rounded-[1.75rem] sm:rounded-[2.5rem] border border-outline-variant/20 bg-gradient-to-br from-primary/10 via-surface-container-lowest to-tertiary/10 p-5 sm:p-10 lg:p-14">
+            <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 sm:h-72 sm:w-72 rounded-full bg-primary/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-24 -left-16 h-60 w-60 sm:h-72 sm:w-72 rounded-full bg-tertiary/20 blur-3xl" />
 
-            <div className="relative grid gap-10 lg:grid-cols-2 lg:items-center">
+            <div className="relative grid gap-8 sm:gap-10 lg:grid-cols-2 lg:items-center">
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#5865F2]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#5865F2]">
                   <DiscordMark className="h-3.5 w-3.5" />
                   Discord bot
                 </span>
-                <h2 className="mt-5 font-headline text-3xl font-extrabold leading-tight text-on-surface sm:text-4xl lg:text-5xl">
-                  Add <span className="text-primary">Tippy</span> to your community and tip your
-                  users in chat
+                <h2 className="mt-4 font-headline text-[28px] font-extrabold leading-[1.1] text-on-surface sm:mt-5 sm:text-4xl lg:text-5xl">
+                  Add <span className="text-primary">Tippy</span> to your community and tip users
+                  in chat
                 </h2>
-                <p className="mt-4 max-w-xl text-base text-on-surface-variant">
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-on-surface-variant sm:mt-4 sm:text-base">
                   The Tippy Discord bot lets server admins reward contributors with CFX and
-                  ERC-20s without anyone leaving the channel. Same Conflux eSpace that powers your
-                  campaigns. Same login. Instant settlement.
+                  ERC-20s without anyone leaving the channel. Same Conflux eSpace, same login,
+                  instant settlement.
                 </p>
 
-                <div className="mt-8 flex flex-wrap items-center gap-3">
+                <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:items-center">
                   <a
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#5865F2] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/25 transition-all hover:bg-[#4752c4] active:scale-95"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#5865F2] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#5865F2]/25 transition-all hover:bg-[#4752c4] active:scale-95 sm:w-auto"
                   >
                     <DiscordMark className="h-4 w-4" />
                     Add Tippy to Discord
@@ -80,31 +80,31 @@ export function TippyBotCta() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-outline-variant/40 bg-surface-container-lowest px-6 py-3.5 text-sm font-bold text-on-surface transition-colors hover:border-primary/40 hover:bg-surface-container-high"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-outline-variant/40 bg-surface-container-lowest px-6 py-3.5 text-sm font-bold text-on-surface transition-colors hover:border-primary/40 hover:bg-surface-container-high sm:w-auto"
                   >
                     See the bot page
                     <span className="material-symbols-outlined text-base">arrow_forward</span>
                   </a>
                 </div>
 
-                <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-on-surface-variant">
+                <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-on-surface-variant sm:mt-8">
                   <span className="inline-flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-tertiary text-base">
                       verified
                     </span>
-                    Built for Conflux eSpace
+                    Conflux eSpace
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-tertiary text-base">
                       shield
                     </span>
-                    Custodial per-user addresses
+                    Per-user wallets
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-tertiary text-base">
                       bolt
                     </span>
-                    No seed phrase in chat
+                    No seed phrase
                   </span>
                 </div>
               </div>
@@ -116,11 +116,11 @@ export function TippyBotCta() {
                 transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                 className="relative"
               >
-                <div className="rounded-3xl border border-outline-variant/20 bg-surface-container-lowest p-6 shadow-xl">
-                  <div className="mb-5 flex items-center justify-between">
+                <div className="rounded-2xl sm:rounded-3xl border border-outline-variant/20 bg-surface-container-lowest p-4 sm:p-6 shadow-xl">
+                  <div className="mb-4 flex items-center justify-between sm:mb-5">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#5865F2] text-white">
-                        <DiscordMark className="h-5 w-5" />
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#5865F2] text-white sm:h-10 sm:w-10">
+                        <DiscordMark className="h-4 w-4 sm:h-5 sm:w-5" />
                       </div>
                       <div>
                         <p className="font-headline text-sm font-extrabold text-on-surface">
@@ -131,12 +131,12 @@ export function TippyBotCta() {
                         </p>
                       </div>
                     </div>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-tertiary-container/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-on-tertiary-container">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-tertiary-container/70 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-on-tertiary-container sm:px-2.5 sm:py-1 sm:text-[10px]">
                       <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-tertiary" />
                       Settled
                     </span>
                   </div>
-                  <div className="rounded-2xl bg-surface-container-low p-4 font-mono text-xs text-on-surface-variant">
+                  <div className="rounded-xl sm:rounded-2xl bg-surface-container-low p-3 sm:p-4 font-mono text-xs text-on-surface-variant">
                     <p>
                       <span className="text-primary">/tip</span>{' '}
                       <span className="text-on-surface">@mira</span>{' '}
@@ -150,7 +150,7 @@ export function TippyBotCta() {
                       tx 0x9f1c…e42a · confirmed in 2.3s
                     </p>
                   </div>
-                  <ul className="mt-5 grid grid-cols-2 gap-3 text-xs">
+                  <ul className="mt-4 grid grid-cols-2 gap-2 text-xs sm:mt-5 sm:gap-3">
                     {STEPS.map((s, i) => (
                       <motion.li
                         key={s.title}
@@ -158,14 +158,16 @@ export function TippyBotCta() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.4, delay: 0.1 + i * 0.06 }}
-                        className="flex items-start gap-2 rounded-xl border border-outline-variant/15 bg-surface-container-low p-3"
+                        className="flex items-start gap-2 rounded-xl border border-outline-variant/15 bg-surface-container-low p-2.5 sm:p-3"
                       >
-                        <span className="material-symbols-outlined shrink-0 text-primary">
+                        <span className="material-symbols-outlined shrink-0 text-primary !text-[20px]">
                           {s.icon}
                         </span>
-                        <div>
-                          <p className="font-headline font-bold text-on-surface">{s.title}</p>
-                          <p className="mt-0.5 text-[11px] leading-snug text-on-surface-variant">
+                        <div className="min-w-0">
+                          <p className="font-headline text-[12px] sm:text-sm font-bold leading-snug text-on-surface">
+                            {s.title}
+                          </p>
+                          <p className="mt-0.5 text-[10.5px] sm:text-[11px] leading-snug text-on-surface-variant">
                             {s.body}
                           </p>
                         </div>

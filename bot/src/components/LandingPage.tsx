@@ -35,20 +35,21 @@ export const LandingPage = ({
 
   return (
     <div className="min-h-screen">
-      <nav className="fixed top-0 left-0 right-0 z-[100] px-8 py-6 flex items-center justify-between backdrop-blur-md bg-background/50 border-b border-outline-variant/10">
+      <nav className="fixed top-0 left-0 right-0 z-[100] px-4 sm:px-8 py-3 sm:py-6 flex items-center justify-between backdrop-blur-md bg-background/50 border-b border-outline-variant/10">
         <TippyLogoLink
-          markSize={32}
-          wordmarkClassName="font-headline font-black text-xl tracking-tighter text-on-surface"
+          markSize={28}
+          wordmarkClassName="font-headline font-black text-lg sm:text-xl tracking-tighter text-on-surface"
           className="rounded-lg -m-1 p-1 hover:opacity-90 transition-opacity"
           priority
         />
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
             type="button"
             onClick={toggleTheme}
+            aria-label="Toggle theme"
             className="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all"
           >
-            {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
+            {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
           </button>
           {discordInviteUrl ? (
             <Button variant="outline" href={discordInviteUrl} className="hidden sm:flex px-4 py-2.5 text-sm">
@@ -62,8 +63,14 @@ export const LandingPage = ({
               Add to Discord (set env)
             </span>
           )}
-          <Button className="px-4 py-2.5 text-sm md:px-6" onClick={primaryCtaAction}>
-            {primaryCtaLabel}
+          <Button
+            className="whitespace-nowrap !py-2.5 !px-4 md:!px-6 text-sm"
+            onClick={primaryCtaAction}
+            title={primaryCtaLabel}
+          >
+            <DiscordMark className="h-4 w-4 shrink-0" />
+            <span className="sm:hidden">Log in</span>
+            <span className="hidden sm:inline">{primaryCtaLabel}</span>
           </Button>
         </div>
       </nav>
@@ -331,3 +338,17 @@ export const LandingPage = ({
     </div>
   );
 };
+
+function DiscordMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M20.317 4.369a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 00-.041-.105 13.1 13.1 0 01-1.872-.892.077.077 0 01-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 01.077-.01c3.927 1.793 8.18 1.793 12.061 0a.074.074 0 01.078.009c.12.099.246.198.373.292a.077.077 0 01-.006.127 12.3 12.3 0 01-1.873.892.077.077 0 00-.041.106c.36.699.771 1.363 1.226 1.993a.076.076 0 00.084.028 19.84 19.84 0 006.002-3.03.077.077 0 00.031-.056c.5-5.177-.838-9.674-3.548-13.66a.061.061 0 00-.031-.029zM8.02 15.331c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.974 0c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.947 2.418-2.157 2.418z" />
+    </svg>
+  );
+}

@@ -28,6 +28,16 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+-- Back-fill any columns that may be missing from a previously-initialised
+-- profiles table so this migration is safe to re-run on existing databases.
+alter table public.profiles
+  add column if not exists privy_id text,
+  add column if not exists handle text,
+  add column if not exists display_name text,
+  add column if not exists avatar_url text,
+  add column if not exists wallet_address text,
+  add column if not exists created_at timestamptz not null default now(),
+  add column if not exists updated_at timestamptz not null default now();
 create index if not exists profiles_wallet_idx on public.profiles (lower(wallet_address));
 
 -- ---------- campaigns_cache ----------
@@ -53,6 +63,27 @@ create table if not exists public.campaigns_cache (
   updated_at timestamptz not null default now(),
   primary key (chain_id, campaign_id)
 );
+-- Back-fill any columns that may be missing on a pre-existing campaigns_cache.
+alter table public.campaigns_cache
+  add column if not exists chain_id int,
+  add column if not exists campaign_id numeric,
+  add column if not exists organizer text,
+  add column if not exists token text,
+  add column if not exists mode smallint,
+  add column if not exists metadata_uri text,
+  add column if not exists metadata jsonb,
+  add column if not exists prize_pool numeric not null default 0,
+  add column if not exists total_funded numeric not null default 0,
+  add column if not exists total_tipped numeric not null default 0,
+  add column if not exists total_paid_out numeric not null default 0,
+  add column if not exists total_entitled numeric not null default 0,
+  add column if not exists submissions_close timestamptz,
+  add column if not exists claim_deadline timestamptz,
+  add column if not exists created_at timestamptz,
+  add column if not exists finalized boolean not null default false,
+  add column if not exists latest_verdict_hash text,
+  add column if not exists last_indexed_block numeric not null default 0,
+  add column if not exists updated_at timestamptz not null default now();
 create index if not exists campaigns_cache_organizer_idx
   on public.campaigns_cache (chain_id, lower(organizer));
 create index if not exists campaigns_cache_created_idx
@@ -72,6 +103,17 @@ create table if not exists public.tips_cache (
   created_at timestamptz not null default now(),
   primary key (chain_id, tx_hash, log_index)
 );
+alter table public.tips_cache
+  add column if not exists chain_id int,
+  add column if not exists campaign_id numeric,
+  add column if not exists log_index int,
+  add column if not exists block_number numeric,
+  add column if not exists tx_hash text,
+  add column if not exists from_address text,
+  add column if not exists amount numeric,
+  add column if not exists note text,
+  add column if not exists kind text,
+  add column if not exists created_at timestamptz not null default now();
 create index if not exists tips_cache_campaign_idx
   on public.tips_cache (chain_id, campaign_id, block_number desc, log_index desc);
 
@@ -91,6 +133,19 @@ create table if not exists public.payouts_cache (
   created_at timestamptz not null default now(),
   primary key (chain_id, tx_hash, log_index)
 );
+alter table public.payouts_cache
+  add column if not exists chain_id int,
+  add column if not exists campaign_id numeric,
+  add column if not exists log_index int,
+  add column if not exists block_number numeric,
+  add column if not exists tx_hash text,
+  add column if not exists kind text,
+  add column if not exists to_address text,
+  add column if not exists amount numeric,
+  add column if not exists submission_hash text,
+  add column if not exists verdict_hash text,
+  add column if not exists note text,
+  add column if not exists created_at timestamptz not null default now();
 create index if not exists payouts_cache_campaign_idx
   on public.payouts_cache (chain_id, campaign_id, block_number desc, log_index desc);
 
@@ -120,6 +175,20 @@ create table if not exists public.submissions (
   updated_at timestamptz not null default now(),
   unique (chain_id, campaign_id, submission_hash)
 );
+alter table public.submissions
+  add column if not exists chain_id int,
+  add column if not exists campaign_id numeric,
+  add column if not exists submitter_privy_id text,
+  add column if not exists submitter_wallet text,
+  add column if not exists title text,
+  add column if not exists content text,
+  add column if not exists links jsonb,
+  add column if not exists attachments jsonb,
+  add column if not exists submission_hash text,
+  add column if not exists status text not null default 'pending',
+  add column if not exists score numeric,
+  add column if not exists created_at timestamptz not null default now(),
+  add column if not exists updated_at timestamptz not null default now();
 create index if not exists submissions_campaign_idx
   on public.submissions (chain_id, campaign_id, created_at desc);
 create index if not exists submissions_submitter_idx
@@ -172,6 +241,17 @@ create table if not exists public.settlement_plans (
   created_at timestamptz not null default now(),
   published_at timestamptz
 );
+alter table public.settlement_plans
+  add column if not exists chain_id int,
+  add column if not exists campaign_id numeric,
+  add column if not exists organizer_privy_id text,
+  add column if not exists status text not null default 'draft',
+  add column if not exists winners jsonb,
+  add column if not exists verdict_hash text,
+  add column if not exists tx_hash text,
+  add column if not exists payout_note text,
+  add column if not exists created_at timestamptz not null default now(),
+  add column if not exists published_at timestamptz;
 create index if not exists settlement_plans_campaign_idx
   on public.settlement_plans (chain_id, campaign_id, created_at desc);
 

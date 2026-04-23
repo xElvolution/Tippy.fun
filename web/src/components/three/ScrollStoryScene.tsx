@@ -1,17 +1,17 @@
 'use client';
 
-import { Suspense, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   ContactShadows,
   Float,
   AdaptiveDpr,
   AdaptiveEvents,
-  useTexture,
+  RoundedBox,
 } from '@react-three/drei';
 import type { MotionValue } from 'framer-motion';
 import * as THREE from 'three';
-import { ConfluxCoin } from './TippyMascot';
+import { exclusiveStageWeights } from '@/components/scrollStoryStages';
 
 type ScrollStorySceneProps = {
   progress: MotionValue<number>;
@@ -19,11 +19,9 @@ type ScrollStorySceneProps = {
 };
 
 /**
- * Four stages live inside one Canvas; cross-fade & slide based on scroll progress.
- *   0.00 – 0.25  → Conflux coin          (Fund)
- *   0.25 – 0.50  → Chat bubble           (Engage)
- *   0.50 – 0.75  → AI arbiter orbiter    (Judge)
- *   0.75 – 1.00  → Trophy                (Pay out)
+ * Four stages share one Canvas. Stage weights come from
+ * `exclusiveStageWeights` so at most two adjacent stages blend — never two
+ * full-opacity layers stacked.
  */
 export function ScrollStoryScene({ progress, reducedMotion = false }: ScrollStorySceneProps) {
   return (
@@ -40,6 +38,8 @@ export function ScrollStoryScene({ progress, reducedMotion = false }: ScrollStor
       <directionalLight position={[3, 5, 2]} intensity={2.2} color="#8fe4ff" />
       <pointLight position={[-3, 1, 2]} intensity={2.5} color="#ff3df5" distance={12} />
       <pointLight position={[3, 0, 2]} intensity={1.6} color="#3ec28f" distance={12} />
+      {/* Very soft warm fill — trophy gold is mostly material-driven now */}
+      <pointLight position={[2.0, 0.25, 3.0]} intensity={0.42} color="#e8d4b0" distance={11} decay={2} />
 
       <Suspense fallback={null}>
         <StoryStage progress={progress} reducedMotion={reducedMotion} />
@@ -49,7 +49,12 @@ export function ScrollStoryScene({ progress, reducedMotion = false }: ScrollStor
   );
 }
 
-const ANCHORS = [0.125, 0.375, 0.625, 0.875] as const;
+const BANDS: ReadonlyArray<[number, number]> = [
+  [0.0, 0.25],
+  [0.25, 0.5],
+  [0.5, 0.75],
+  [0.75, 1.0],
+];
 
 function StoryStage({
   progress,
@@ -58,50 +63,72 @@ function StoryStage({
   progress: MotionValue<number>;
   reducedMotion: boolean;
 }) {
-  // Load texture once; shared by coin + chat stamp.
-  const confluxTexture = useTexture('/conflux-logo.png');
+  const confluxTexture = useMemo(() => {
+    const loader = new THREE.TextureLoader();
+    const t = loader.load('/conflux-logo.png');
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }, []);
 
   const coinRef = useRef<THREE.Group>(null);
-  const chatRef = useRef<THREE.Group>(null);
+  const coinTiltRef = useRef<THREE.Group>(null);
+  const engageRef = useRef<THREE.Group>(null);
   const judgeRef = useRef<THREE.Group>(null);
   const trophyRef = useRef<THREE.Group>(null);
 
-  const judgeOrbs = [useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null)] as const;
+  const orb0 = useRef<THREE.Group>(null);
+  const orb1 = useRef<THREE.Group>(null);
+  const orb2 = useRef<THREE.Group>(null);
+  const orbs = [orb0, orb1, orb2];
 
   useFrame((state, delta) => {
     const p = progress.get();
+    const w = exclusiveStageWeights(p);
 
-    const bump = (pos: number, width: number) => {
-      const d = Math.abs(p - pos);
-      return THREE.MathUtils.clamp(1 - d / width, 0, 1);
+    applyAlpha(coinRef.current, w[0]);
+    applyAlpha(engageRef.current, w[1]);
+    applyAlpha(judgeRef.current, w[2]);
+    applyAlpha(trophyRef.current, w[3]);
+
+    const slide = (bandIndex: number, magnitude = 1.2) => {
+      const [lo, hi] = BANDS[bandIndex];
+      const within = THREE.MathUtils.clamp((p - lo) / (hi - lo), 0, 1);
+      return (within - 0.5) * -2 * magnitude;
     };
+    if (coinRef.current) coinRef.current.position.x = slide(0);
+    if (engageRef.current) engageRef.current.position.x = slide(1);
+    if (judgeRef.current) judgeRef.current.position.x = slide(2);
+    if (trophyRef.current) trophyRef.current.position.x = slide(3);
 
-    const alphas = ANCHORS.map((a) => bump(a, 0.17));
+    // Fund coin: start tilted (edge toward camera), rotate to face-up at mid-band.
+    if (coinTiltRef.current && w[0] > 0.02) {
+      const [lo, hi] = BANDS[0];
+      const u = THREE.MathUtils.clamp((p - lo) / (hi - lo), 0, 1);
+      const face = Math.sin(Math.PI * u);
+      const rxDown = Math.PI / 2.12;
+      const rxUp = 0.07;
+      coinTiltRef.current.rotation.x = THREE.MathUtils.lerp(rxDown, rxUp, face);
+      coinTiltRef.current.rotation.z = THREE.MathUtils.lerp(0.12, 0, face);
+    }
 
-    applyAlpha(coinRef.current, alphas[0]);
-    applyAlpha(chatRef.current, alphas[1]);
-    applyAlpha(judgeRef.current, alphas[2]);
-    applyAlpha(trophyRef.current, alphas[3]);
-
-    const laneX = (anchor: number) => (p - anchor) * -4;
-    if (coinRef.current) coinRef.current.position.x = laneX(ANCHORS[0]);
-    if (chatRef.current) chatRef.current.position.x = laneX(ANCHORS[1]);
-    if (judgeRef.current) judgeRef.current.position.x = laneX(ANCHORS[2]);
-    if (trophyRef.current) trophyRef.current.position.x = laneX(ANCHORS[3]);
+    // Trophy — spins smoothly tied to scroll progress within its own band.
+    if (trophyRef.current) {
+      const [lo, hi] = BANDS[3];
+      const u = THREE.MathUtils.clamp((p - lo) / (hi - lo), 0, 1);
+      trophyRef.current.rotation.y = u * Math.PI * 2;
+    }
 
     if (reducedMotion) return;
 
     const t = state.clock.elapsedTime;
     if (coinRef.current) coinRef.current.rotation.y += delta * 1.5;
-    if (chatRef.current) chatRef.current.rotation.y = Math.sin(t * 0.8) * 0.15;
-    if (trophyRef.current) trophyRef.current.rotation.y = Math.sin(t * 0.6) * 0.2;
+    if (engageRef.current) engageRef.current.rotation.y = Math.sin(t * 0.8) * 0.12;
 
-    // Judge orbs orbit the central arbiter.
-    judgeOrbs.forEach((ref, i) => {
+    orbs.forEach((ref, i) => {
       if (!ref.current) return;
       const speed = 0.6 + i * 0.15;
       const radius = 1.1;
-      const offset = (i / judgeOrbs.length) * Math.PI * 2;
+      const offset = (i / orbs.length) * Math.PI * 2;
       ref.current.position.x = Math.cos(t * speed + offset) * radius;
       ref.current.position.y = Math.sin(t * speed * 0.8 + offset) * 0.35;
       ref.current.position.z = Math.sin(t * speed + offset) * radius * 0.5;
@@ -111,19 +138,15 @@ function StoryStage({
   return (
     <>
       <group ref={coinRef}>
-        <Float floatIntensity={0.8} rotationIntensity={0.2} speed={1.4}>
-          <group rotation={[Math.PI / 2.4, 0, 0]} scale={1.6}>
-            <ConfluxCoin texture={confluxTexture} size={1} />
-          </group>
-        </Float>
+        <ConfluxCoin texture={confluxTexture} tiltInnerRef={coinTiltRef} />
       </group>
 
-      <group ref={chatRef}>
-        <ChatBubble texture={confluxTexture} />
+      <group ref={engageRef}>
+        <EngagePlatforms progress={progress} />
       </group>
 
       <group ref={judgeRef}>
-        <AIJudgeOrbiter judgeOrbs={judgeOrbs} />
+        <AIJudgeOrbiter orbRefs={[orb0, orb1, orb2]} />
       </group>
 
       <group ref={trophyRef}>
@@ -150,36 +173,37 @@ function applyAlpha(group: THREE.Group | null, alpha: number) {
   });
 }
 
-function ChatBubble({ texture }: { texture: THREE.Texture }) {
+function ConfluxCoin({
+  texture,
+  tiltInnerRef,
+}: {
+  texture: THREE.Texture;
+  tiltInnerRef: React.RefObject<THREE.Group | null>;
+}) {
+  const size = 1.4;
+  const radius = size / 2;
+  const thickness = size * 0.1;
   return (
-    <Float floatIntensity={0.5} rotationIntensity={0.15} speed={1.2}>
-      <group>
-        {/* Bubble body */}
-        <mesh>
-          <boxGeometry args={[2, 1.35, 0.28]} />
-          <meshPhysicalMaterial
-            color="#2d1f4d"
-            roughness={0.3}
-            metalness={0.35}
-            clearcoat={0.8}
-            emissive="#6b38d4"
-            emissiveIntensity={0.4}
+    <Float floatIntensity={0.8} rotationIntensity={0.2} speed={1.4}>
+      <group ref={tiltInnerRef} rotation={[Math.PI / 2.12, 0, 0.12]}>
+        <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
+          <cylinderGeometry args={[radius, radius, thickness, 64]} />
+          <meshStandardMaterial
+            color="#f5c451"
+            metalness={1}
+            roughness={0.15}
+            emissive="#a67914"
+            emissiveIntensity={0.25}
           />
         </mesh>
-        {/* Tail */}
-        <mesh position={[-0.65, -0.85, 0]} rotation={[0, 0, Math.PI / 4]}>
-          <boxGeometry args={[0.38, 0.38, 0.22]} />
-          <meshPhysicalMaterial
-            color="#2d1f4d"
-            roughness={0.3}
-            metalness={0.35}
-            emissive="#6b38d4"
-            emissiveIntensity={0.3}
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry
+            args={[radius * 0.82, radius * 0.82, thickness * 1.02, 64]}
           />
+          <meshStandardMaterial color="#d9a93f" metalness={1} roughness={0.22} />
         </mesh>
-        {/* Conflux stamp inside the bubble */}
-        <mesh position={[-0.55, 0, 0.145]}>
-          <planeGeometry args={[0.65, 0.65]} />
+        <mesh position={[0, 0, thickness / 2 + 0.002]}>
+          <planeGeometry args={[size * 0.78, size * 0.78]} />
           <meshStandardMaterial
             map={texture}
             emissiveMap={texture}
@@ -190,115 +214,341 @@ function ChatBubble({ texture }: { texture: THREE.Texture }) {
             toneMapped={false}
           />
         </mesh>
-        {/* "+5 CFX" tip chip on the right */}
-        <mesh position={[0.45, 0, 0.145]}>
-          <boxGeometry args={[0.7, 0.36, 0.02]} />
+        <mesh
+          position={[0, 0, -(thickness / 2 + 0.002)]}
+          rotation={[0, Math.PI, 0]}
+        >
+          <planeGeometry args={[size * 0.78, size * 0.78]} />
           <meshStandardMaterial
-            color="#6ffbbe"
-            emissive="#6ffbbe"
-            emissiveIntensity={1.2}
+            map={texture}
+            emissiveMap={texture}
+            emissive="#ffffff"
+            emissiveIntensity={0.9}
+            transparent
+            alphaTest={0.05}
             toneMapped={false}
           />
-        </mesh>
-        <mesh position={[0.45, 0, 0.16]}>
-          <boxGeometry args={[0.12, 0.12, 0.02]} />
-          <meshStandardMaterial color="#0b2030" />
         </mesh>
       </group>
     </Float>
   );
 }
 
+/** Yin-yang orbit radius for the Discord / Telegram tiles. */
+const ENGAGE_ORBIT_R = 0.85;
+
+/**
+ * Stage 2 — Discord + Telegram ride a **yin-yang orbit**: they sit 180° apart
+ * on a circle and spin together as you scroll. They never meet. To preserve
+ * that feel when the circle is seen edge-on, one tile is offset slightly
+ * forward and the other slightly back on Z (scaled by the crossing moments),
+ * so they glide past one another in depth instead of through.
+ */
+function EngagePlatforms({ progress }: { progress: MotionValue<number> }) {
+  const discordTex = useMemo(() => {
+    const loader = new THREE.TextureLoader();
+    const t = loader.load('/discord-app-logo.png', (tex) => {
+      tex.needsUpdate = true;
+    });
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    return t;
+  }, []);
+  const telegramTex = useMemo(() => {
+    const loader = new THREE.TextureLoader();
+    const t = loader.load('/telegram-app-logo.png', (tex) => {
+      tex.needsUpdate = true;
+    });
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    return t;
+  }, []);
+
+  const discordRef = useRef<THREE.Group>(null);
+  const telegramRef = useRef<THREE.Group>(null);
+
+  useFrame(() => {
+    const p = progress.get();
+    const [lo, hi] = BANDS[1];
+    const u = THREE.MathUtils.clamp((p - lo) / (hi - lo), 0, 1);
+    // One full yin-yang rotation across the Engage band, starting with
+    // Discord at top (θ = π/2) and Telegram at bottom (θ = -π/2).
+    const theta = Math.PI / 2 + u * Math.PI * 2;
+    const cos = Math.cos(theta);
+    const sin = Math.sin(theta);
+
+    // When the orbit is horizontal (tiles crossing mid-line) |cos| ≈ 1;
+    // we use that to push Discord in front and Telegram behind so the
+    // silhouettes don't collide.
+    const depth = cos * 0.22;
+
+    if (discordRef.current) {
+      discordRef.current.position.x = cos * ENGAGE_ORBIT_R;
+      discordRef.current.position.y = sin * ENGAGE_ORBIT_R;
+      discordRef.current.position.z = 0.02 + depth;
+    }
+    if (telegramRef.current) {
+      telegramRef.current.position.x = -cos * ENGAGE_ORBIT_R;
+      telegramRef.current.position.y = -sin * ENGAGE_ORBIT_R;
+      telegramRef.current.position.z = 0.02 - depth;
+    }
+  });
+
+  return (
+    <Float floatIntensity={0.35} rotationIntensity={0.1} speed={1.1}>
+      <group scale={0.92}>
+        {/* Discord — starts at the top of the orbit */}
+        <group ref={discordRef}>
+          <RoundedBox args={[0.78, 0.78, 0.14]} radius={0.14} smoothness={4} castShadow>
+            <meshStandardMaterial
+              color="#15182c"
+              roughness={0.5}
+              metalness={0.12}
+              emissive="#1a1f3d"
+              emissiveIntensity={0.12}
+            />
+          </RoundedBox>
+          <mesh position={[0, 0, 0.078]} renderOrder={2}>
+            <planeGeometry args={[0.66, 0.66]} />
+            <meshBasicMaterial
+              map={discordTex}
+              toneMapped={false}
+              transparent
+              alphaTest={0.32}
+              depthWrite
+            />
+          </mesh>
+        </group>
+
+        {/* Telegram — starts at the bottom, 180° opposite */}
+        <group ref={telegramRef}>
+          <RoundedBox args={[0.78, 0.78, 0.14]} radius={0.14} smoothness={4} castShadow>
+            <meshStandardMaterial
+              color="#0f2f44"
+              roughness={0.48}
+              metalness={0.15}
+              emissive="#0a3d5c"
+              emissiveIntensity={0.14}
+            />
+          </RoundedBox>
+          <mesh position={[0, 0, 0.078]} renderOrder={2}>
+            <planeGeometry args={[0.66, 0.66]} />
+            <meshBasicMaterial
+              map={telegramTex}
+              toneMapped={false}
+              transparent
+              alphaTest={0.02}
+              depthWrite
+            />
+          </mesh>
+        </group>
+      </group>
+    </Float>
+  );
+}
+
+function useLabelTexture(
+  glyph: string,
+  fg = '#07050f',
+  fontStack = 'Georgia, "Times New Roman", serif',
+) {
+  return useMemo(() => {
+    if (typeof document === 'undefined') return null;
+    const size = 256;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+    ctx.clearRect(0, 0, size, size);
+    const scale =
+      glyph.length > 2 ? 0.34 : glyph.length > 1 ? 0.48 : 0.72;
+    ctx.font = `900 ${Math.floor(size * scale)}px ${fontStack}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = fg;
+    ctx.fillText(glyph, size / 2, size / 2 + 4);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    tex.needsUpdate = true;
+    return tex;
+  }, [glyph, fg, fontStack]);
+}
+
 function AIJudgeOrbiter({
-  judgeOrbs,
+  orbRefs,
 }: {
-  judgeOrbs: readonly [
+  orbRefs: [
     React.RefObject<THREE.Group | null>,
     React.RefObject<THREE.Group | null>,
     React.RefObject<THREE.Group | null>,
   ];
 }) {
-  const judgeColors = ['#8fe4ff', '#ff3df5', '#6ffbbe'] as const;
+  const alphaTex = useLabelTexture('α');
+  const betaTex = useLabelTexture('β');
+  const gammaTex = useLabelTexture('γ');
+  const aiTex = useLabelTexture(
+    'AI',
+    '#f8fafc',
+    'system-ui, "Segoe UI", sans-serif',
+  );
+
+  const judges = [
+    { color: '#8fe4ff', tex: alphaTex },
+    { color: '#ff3df5', tex: betaTex },
+    { color: '#6ffbbe', tex: gammaTex },
+  ] as const;
 
   return (
     <group>
-      {/* Central arbiter — a pulsing crystalline orb with a translucent halo */}
       <Float floatIntensity={0.3} rotationIntensity={0.25} speed={1}>
         <group>
           <mesh>
             <icosahedronGeometry args={[0.55, 1]} />
-            <meshPhysicalMaterial
-              color="#7c5cff"
-              metalness={0.6}
-              roughness={0.2}
-              clearcoat={1}
-              emissive="#7c5cff"
-              emissiveIntensity={0.9}
-              transmission={0.25}
-              thickness={0.4}
-            />
-          </mesh>
-          <mesh>
-            <sphereGeometry args={[0.78, 24, 24]} />
-            <meshBasicMaterial color="#7c5cff" transparent opacity={0.1} />
-          </mesh>
-        </group>
-      </Float>
-
-      {/* Three judge personas orbiting the arbiter */}
-      {judgeColors.map((c, i) => (
-        <group key={c} ref={judgeOrbs[i]}>
-          <mesh>
-            <sphereGeometry args={[0.18, 24, 24]} />
             <meshStandardMaterial
-              color={c}
-              emissive={c}
-              emissiveIntensity={1.8}
+              color="#7c5cff"
+              metalness={0.5}
+              roughness={0.25}
+              emissive="#7c5cff"
+              emissiveIntensity={1.1}
               toneMapped={false}
             />
           </mesh>
-          {/* Soft halo */}
+          {aiTex && (
+            <>
+              <mesh position={[0, 0, 0.56]}>
+                <planeGeometry args={[0.52, 0.28]} />
+                <meshBasicMaterial
+                  map={aiTex}
+                  transparent
+                  alphaTest={0.08}
+                  toneMapped={false}
+                />
+              </mesh>
+              <mesh position={[0, 0, -0.56]} rotation={[0, Math.PI, 0]}>
+                <planeGeometry args={[0.52, 0.28]} />
+                <meshBasicMaterial
+                  map={aiTex}
+                  transparent
+                  alphaTest={0.08}
+                  toneMapped={false}
+                />
+              </mesh>
+            </>
+          )}
+        </group>
+      </Float>
+
+      {judges.map((j, i) => (
+        <group key={i} ref={orbRefs[i]}>
           <mesh>
-            <sphereGeometry args={[0.28, 24, 24]} />
-            <meshBasicMaterial color={c} transparent opacity={0.18} />
+            <sphereGeometry args={[0.24, 28, 28]} />
+            <meshStandardMaterial
+              color={j.color}
+              emissive={j.color}
+              emissiveIntensity={1.6}
+              toneMapped={false}
+            />
           </mesh>
+          {j.tex && (
+            <>
+              <mesh position={[0, 0, 0.245]}>
+                <planeGeometry args={[0.32, 0.32]} />
+                <meshBasicMaterial
+                  map={j.tex}
+                  transparent
+                  alphaTest={0.1}
+                  toneMapped={false}
+                />
+              </mesh>
+              <mesh position={[0, 0, -0.245]} rotation={[0, Math.PI, 0]}>
+                <planeGeometry args={[0.32, 0.32]} />
+                <meshBasicMaterial
+                  map={j.tex}
+                  transparent
+                  alphaTest={0.1}
+                  toneMapped={false}
+                />
+              </mesh>
+            </>
+          )}
         </group>
       ))}
     </group>
   );
 }
 
+/** Lathe profile (radius x, height y) — classic cup flare, read as one solid. */
+const TROPHY_CUP_PROFILE = [
+  new THREE.Vector2(0.1, 0),
+  new THREE.Vector2(0.13, 0.04),
+  new THREE.Vector2(0.3, 0.2),
+  new THREE.Vector2(0.47, 0.4),
+  new THREE.Vector2(0.52, 0.54),
+  new THREE.Vector2(0.48, 0.66),
+  new THREE.Vector2(0.36, 0.8),
+  new THREE.Vector2(0.32, 0.9),
+];
+
+/** Rich gold metal — not neon yellow; low emissive, higher roughness. */
+const TROPHY_GOLD = {
+  color: '#b8923f' as const,
+  metalness: 1,
+  roughness: 0.32,
+  emissive: '#3d2e0a' as const,
+  emissiveIntensity: 0.07,
+};
+
 function Trophy() {
+  const cupGeo = useMemo(
+    () => new THREE.LatheGeometry(TROPHY_CUP_PROFILE, 52),
+    [],
+  );
+  useEffect(() => () => cupGeo.dispose(), [cupGeo]);
+
   return (
-    <Float floatIntensity={0.4} rotationIntensity={0.15} speed={1}>
-      <group>
-        <mesh position={[0, 0.4, 0]}>
-          <cylinderGeometry args={[0.55, 0.35, 0.9, 32, 1, false]} />
-          <meshPhysicalMaterial color="#f5c451" metalness={1} roughness={0.15} clearcoat={1} />
+    <Float floatIntensity={0.35} rotationIntensity={0.12} speed={1}>
+      <group position={[0, -0.08, 0]}>
+        {/* Cup — lathe so silhouette reads as a real trophy bowl */}
+        <mesh position={[0, 0.12, 0]} geometry={cupGeo} castShadow>
+          <meshStandardMaterial {...TROPHY_GOLD} />
         </mesh>
-        <mesh position={[-0.62, 0.45, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <torusGeometry args={[0.22, 0.05, 12, 32, Math.PI]} />
-          <meshStandardMaterial color="#f5c451" metalness={1} roughness={0.2} />
+
+        {/* Handles — slightly >180° arc, pulled in so ends meet the cup wall */}
+        <mesh
+          position={[-0.44, 0.52, 0]}
+          rotation={[0, 0, Math.PI / 2]}
+        >
+          <torusGeometry args={[0.2, 0.044, 14, 40, Math.PI * 1.12]} />
+          <meshStandardMaterial {...TROPHY_GOLD} />
         </mesh>
-        <mesh position={[0.62, 0.45, 0]} rotation={[0, Math.PI, Math.PI / 2]}>
-          <torusGeometry args={[0.22, 0.05, 12, 32, Math.PI]} />
-          <meshStandardMaterial color="#f5c451" metalness={1} roughness={0.2} />
+        <mesh
+          position={[0.44, 0.52, 0]}
+          rotation={[0, Math.PI, Math.PI / 2]}
+        >
+          <torusGeometry args={[0.2, 0.044, 14, 40, Math.PI * 1.12]} />
+          <meshStandardMaterial {...TROPHY_GOLD} />
+        </mesh>
+
+        <mesh position={[0, -0.02, 0]}>
+          <cylinderGeometry args={[0.1, 0.14, 0.26, 24]} />
+          <meshStandardMaterial
+            color="#9a7328"
+            metalness={1}
+            roughness={0.35}
+            emissive="#2a2008"
+            emissiveIntensity={0.06}
+          />
         </mesh>
         <mesh position={[0, -0.2, 0]}>
-          <cylinderGeometry args={[0.12, 0.18, 0.3, 24]} />
-          <meshStandardMaterial color="#a67914" metalness={0.9} roughness={0.3} />
-        </mesh>
-        <mesh position={[0, -0.45, 0]}>
-          <boxGeometry args={[0.9, 0.18, 0.6]} />
-          <meshPhysicalMaterial color="#2d1f4d" metalness={0.5} roughness={0.4} />
-        </mesh>
-        <mesh position={[0, 0.45, 0.56]}>
-          <boxGeometry args={[0.3, 0.08, 0.01]} />
+          <boxGeometry args={[0.82, 0.14, 0.52]} />
           <meshStandardMaterial
-            color="#ffffff"
-            emissive="#ffffff"
-            emissiveIntensity={1.2}
-            toneMapped={false}
+            color="#2a2540"
+            metalness={0.55}
+            roughness={0.45}
+            emissive="#181428"
+            emissiveIntensity={0.08}
           />
         </mesh>
       </group>

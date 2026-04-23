@@ -113,6 +113,9 @@ function AppShellChrome({
   const isPublicSection = isPublicFullWidthPath(pathname);
   const showDesktopSidebar = pathname !== '/' && !isPublicSection;
   const hideSlideOutNav = pathname === '/' || isPublicSection;
+  // Notifications only belong to the authenticated dashboard shell, not the
+  // landing / public marketing pages (where they add noise and clip on mobile).
+  const showNotifications = showDesktopSidebar;
 
   React.useEffect(() => {
     try {
@@ -514,6 +517,7 @@ function AppShellChrome({
                 Browse campaigns
               </Link>
             )}
+            {showNotifications ? (
             <div className="relative" ref={notifRef}>
               <button
                 type="button"
@@ -535,7 +539,7 @@ function AppShellChrome({
                 <div
                   role="dialog"
                   aria-label="Notifications"
-                  className="absolute right-0 top-[calc(100%+0.5rem)] z-[60] w-[min(calc(100vw-2rem),22rem)] overflow-hidden rounded-2xl border border-outline-variant/25 bg-surface-container-lowest shadow-xl dark:border-outline-variant/40 dark:bg-surface-container-low"
+                  className="fixed sm:absolute right-4 sm:right-0 top-[4.5rem] sm:top-[calc(100%+0.5rem)] z-[60] w-[calc(100vw-2rem)] sm:w-[22rem] max-w-[22rem] overflow-hidden rounded-2xl border border-outline-variant/25 bg-surface-container-lowest shadow-xl dark:border-outline-variant/40 dark:bg-surface-container-low"
                 >
                   <div className="border-b border-outline-variant/20 px-4 py-3 dark:border-outline-variant/30">
                     <p className="font-headline text-sm font-bold text-on-surface">Notifications</p>
@@ -580,6 +584,7 @@ function AppShellChrome({
                 </div>
               ) : null}
             </div>
+            ) : null}
             <ConnectWalletButton />
           </div>
         </header>

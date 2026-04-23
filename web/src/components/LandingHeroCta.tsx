@@ -12,7 +12,7 @@ export function LandingHeroCta() {
         Create a campaign
       </Link>
       <Link
-        href="/signup?redirect=/operator_dashboard"
+        href="/public_campaign_page"
         className="bg-surface-container-highest text-on-surface px-8 py-4 rounded-xl font-bold text-lg hover:bg-surface-dim transition-all active:scale-95 inline-flex items-center justify-center"
       >
         Browse live campaigns

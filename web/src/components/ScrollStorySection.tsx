@@ -1,8 +1,16 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useRef } from 'react';
-import { useScroll, useTransform, motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+import {
+  useScroll,
+  useMotionValueEvent,
+  useReducedMotion,
+} from 'framer-motion';
+import {
+  exclusiveStageWeights,
+  STORY_STAGE_COUNT,
+} from '@/components/scrollStoryStages';
 
 const ScrollStoryScene = dynamic(
   () => import('@/components/three/ScrollStoryScene').then((m) => m.ScrollStoryScene),
@@ -40,72 +48,51 @@ const STAGES = [
   },
 ];
 
-// Anchor centers in scroll-progress space — quarters of the section.
-const ANCHORS = [0.125, 0.375, 0.625, 0.875] as const;
-// Plateau half-width and fade half-width together define how long a stage is "held" at full opacity vs. cross-fading.
-const PLATEAU = 0.04;
-const FADE = 0.08;
-
-function stageWindow(anchor: number) {
-  // [outStart, plateauStart, plateauEnd, outEnd]
-  return [
-    anchor - PLATEAU - FADE,
-    anchor - PLATEAU,
-    anchor + PLATEAU,
-    anchor + PLATEAU + FADE,
-  ] as const;
-}
-
 export function ScrollStorySection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
+
+  // One ref per stage panel and dot — we push styles imperatively every time
+  // scrollYProgress changes, avoiding framer-motion ref wiring on each node.
+  const panelRefs = useRef<(HTMLDivElement | null)[]>([null, null, null, null]);
+  const dotRefs = useRef<(HTMLSpanElement | null)[]>([null, null, null, null]);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
   });
 
-  // Build one opacity MotionValue per stage. useTransform must be called at the
-  // top level, so we call it explicitly four times instead of in a map.
-  const w1 = stageWindow(ANCHORS[0]);
-  const w2 = stageWindow(ANCHORS[1]);
-  const w3 = stageWindow(ANCHORS[2]);
-  const w4 = stageWindow(ANCHORS[3]);
+  // Paint once on mount so the first frame isn't fully opaque/stacked.
+  useEffect(() => {
+    paint(scrollYProgress.get());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const opacity1 = useTransform(
-    scrollYProgress,
-    [w1[0], w1[1], w1[2], w1[3]],
-    [0, 1, 1, 0],
-  );
-  const opacity2 = useTransform(
-    scrollYProgress,
-    [w2[0], w2[1], w2[2], w2[3]],
-    [0, 1, 1, 0],
-  );
-  const opacity3 = useTransform(
-    scrollYProgress,
-    [w3[0], w3[1], w3[2], w3[3]],
-    [0, 1, 1, 0],
-  );
-  const opacity4 = useTransform(
-    scrollYProgress,
-    [w4[0], w4[1], w4[2], w4[3]],
-    [0, 1, 1, 0],
-  );
+  useMotionValueEvent(scrollYProgress, 'change', (p) => paint(p));
 
-  const y1 = useTransform(scrollYProgress, [w1[0], w1[1], w1[2], w1[3]], [30, 0, 0, -30]);
-  const y2 = useTransform(scrollYProgress, [w2[0], w2[1], w2[2], w2[3]], [30, 0, 0, -30]);
-  const y3 = useTransform(scrollYProgress, [w3[0], w3[1], w3[2], w3[3]], [30, 0, 0, -30]);
-  const y4 = useTransform(scrollYProgress, [w4[0], w4[1], w4[2], w4[3]], [30, 0, 0, -30]);
-
-  const opacities = [opacity1, opacity2, opacity3, opacity4];
-  const ys = [y1, y2, y3, y4];
+  function paint(p: number) {
+    const w = exclusiveStageWeights(p);
+    for (let i = 0; i < STORY_STAGE_COUNT; i++) {
+      const a = w[i];
+      const panel = panelRefs.current[i];
+      if (panel) {
+        panel.style.opacity = String(a);
+        const y = (1 - a) * 12;
+        panel.style.transform = `translate3d(0, ${y}px, 0)`;
+        panel.style.pointerEvents = a > 0.5 ? 'auto' : 'none';
+        panel.style.zIndex = a > 0.5 ? '2' : '0';
+        panel.style.visibility = a < 0.02 ? 'hidden' : 'visible';
+      }
+      const dot = dotRefs.current[i];
+      if (dot) dot.style.opacity = String(a);
+    }
+  }
 
   return (
     <section
       ref={sectionRef}
       className="relative"
-      style={{ height: '360vh' }}
+      style={{ height: '480vh' }}
       aria-label="How Tippy works"
     >
       <div className="sticky top-0 flex h-screen w-full items-center overflow-hidden bg-[radial-gradient(ellipse_at_bottom_left,_#1b1030_0%,_#07050f_55%,_#050309_100%)]">
@@ -123,13 +110,16 @@ export function ScrollStorySection() {
             />
           </div>
 
-          {/* Text stack — four stages cross-fade via opacity */}
+          {/* Text stack — four stages, each painted imperatively on scroll */}
           <div className="relative h-[55vh] lg:h-[70vh]">
             {STAGES.map((stage, i) => (
-              <motion.div
+              <div
                 key={stage.eyebrow}
-                style={{ opacity: opacities[i], y: ys[i] }}
-                className="absolute inset-0 flex flex-col justify-center"
+                ref={(el) => {
+                  panelRefs.current[i] = el;
+                }}
+                className="absolute inset-0 flex flex-col justify-center will-change-[opacity,transform]"
+                style={{ opacity: 0 }}
               >
                 <p
                   className="mb-3 text-xs font-bold uppercase tracking-[0.3em]"
@@ -143,7 +133,7 @@ export function ScrollStorySection() {
                 <p className="mt-6 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
                   {stage.copy}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -152,9 +142,12 @@ export function ScrollStorySection() {
         <div className="pointer-events-none absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-3">
           {STAGES.map((stage, i) => (
             <div key={stage.eyebrow} className="relative h-1.5 w-10 rounded-full bg-white/15">
-              <motion.span
-                className="absolute inset-0 rounded-full"
-                style={{ backgroundColor: stage.accent, opacity: opacities[i] }}
+              <span
+                ref={(el) => {
+                  dotRefs.current[i] = el;
+                }}
+                className="absolute inset-0 rounded-full will-change-[opacity]"
+                style={{ backgroundColor: stage.accent, opacity: 0 }}
               />
             </div>
           ))}
