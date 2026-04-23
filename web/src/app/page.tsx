@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { FadeIn } from '@/components/animations';
 import { SiteFooter } from '@/components/SiteFooter';
 import { LandingHeroCta } from '@/components/LandingHeroCta';
-import { LandingHeroVisual } from '@/components/LandingHeroVisual';
+import { LandingHeroVisual3D } from '@/components/LandingHeroVisual3D';
+import { ScrollStorySection } from '@/components/ScrollStorySection';
 import { HowItWorksSection } from '@/components/HowItWorksSection';
 import { MergedCampaignsGrid } from '@/components/MergedCampaignsGrid';
 import { TippyBotCta } from '@/components/TippyBotCta';
@@ -14,8 +15,10 @@ export default function LandingPage() {
       <section className="relative pt-20 pb-32 px-8 overflow-hidden">
         <FadeIn delay={0.1} className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
           <div className="z-10">
-            <span className="inline-block py-1 px-4 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-sm font-semibold mb-6">
-              Non-custodial · AI judged · Conflux eSpace
+            <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-xs sm:text-sm font-semibold mb-6">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="sm:hidden">AI-judged · Conflux</span>
+              <span className="hidden sm:inline">Non-custodial · AI judged · Conflux eSpace</span>
             </span>
             <h1 className="font-headline text-5xl lg:text-7xl font-extrabold tracking-tight text-on-surface mb-8 leading-[1.1]">
               Launch Funded Campaigns <span className="text-primary">on Socials</span>
@@ -47,9 +50,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <LandingHeroVisual />
+          <LandingHeroVisual3D />
         </FadeIn>
       </section>
+
+      <ScrollStorySection />
 
       <HowItWorksSection />
 

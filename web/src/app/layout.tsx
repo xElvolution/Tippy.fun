@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
 import './globals.css';
 import { AppShell } from '@/components/AppShell';
 import { Providers } from '@/components/Providers';
+import { SmoothScroll } from '@/components/SmoothScroll';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -43,6 +44,7 @@ export default function RootLayout({
         className={`${plusJakartaSans.variable} ${inter.variable} bg-surface font-body text-on-surface antialiased relative min-h-screen`}
       >
         <Providers>
+          <SmoothScroll />
           <AppShell>{children}</AppShell>
         </Providers>
       </body>
