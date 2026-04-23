@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useMemo, useRef } from 'react';
+import { Suspense, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
   ContactShadows,
@@ -9,7 +9,6 @@ import {
   AdaptiveDpr,
   AdaptiveEvents,
 } from '@react-three/drei';
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import type { MotionValue } from 'framer-motion';
 import * as THREE from 'three';
 
@@ -46,11 +45,6 @@ export function ScrollStoryScene({ progress, reducedMotion = false }: ScrollStor
         <StoryStage progress={progress} reducedMotion={reducedMotion} />
         <ContactShadows position={[0, -1.1, 0]} opacity={0.5} scale={6} blur={2} far={3} />
       </Suspense>
-
-      <EffectComposer multisampling={0}>
-        <Bloom intensity={0.8} luminanceThreshold={0.25} luminanceSmoothing={0.9} mipmapBlur />
-        <Vignette eskil={false} offset={0.3} darkness={0.7} />
-      </EffectComposer>
     </Canvas>
   );
 }
@@ -239,31 +233,5 @@ function Trophy() {
         </mesh>
       </group>
     </Float>
-  );
-}
-
-export function useStoryStages() {
-  return useMemo(
-    () => [
-      {
-        eyebrow: '01 · Fund',
-        title: 'Lock a prize on Conflux eSpace',
-        copy:
-          'Escrow is a smart contract. No admin keys, no custodian. Your funds move only to winners, back to you, or via an explicit on-chain claim.',
-      },
-      {
-        eyebrow: '02 · Engage',
-        title: 'Creators compete inside Discord and Telegram',
-        copy:
-          'Submissions and tips stream through the Tippy bot. Every interaction is stamped with the creator identity that eventually claims payout.',
-      },
-      {
-        eyebrow: '03 · Pay out',
-        title: 'AI judges sign, the chain settles',
-        copy:
-          'Three judge personas score every entry. An arbiter aggregates and signs the verdict hash; TippyMaker pays winners in the same block.',
-      },
-    ],
-    [],
   );
 }
