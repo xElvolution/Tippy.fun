@@ -10,13 +10,6 @@ import {
   MeshReflectorMaterial,
   PerformanceMonitor,
 } from '@react-three/drei';
-import {
-  EffectComposer,
-  Bloom,
-  ChromaticAberration,
-  Vignette,
-} from '@react-three/postprocessing';
-import { BlendFunction } from 'postprocessing';
 import { TippyMascot } from './TippyMascot';
 
 type HeroSceneProps = {
@@ -85,24 +78,6 @@ export function HeroScene({ reducedMotion = false }: HeroSceneProps) {
           color="#000000"
         />
       </Suspense>
-
-      {!lowPerf && (
-        <EffectComposer multisampling={0}>
-          <Bloom
-            intensity={0.9}
-            luminanceThreshold={0.2}
-            luminanceSmoothing={0.9}
-            mipmapBlur
-          />
-          <ChromaticAberration
-            offset={[0.0007, 0.0012]}
-            radialModulation={false}
-            modulationOffset={0}
-            blendFunction={BlendFunction.NORMAL}
-          />
-          <Vignette eskil={false} offset={0.25} darkness={0.75} />
-        </EffectComposer>
-      )}
     </Canvas>
   );
 }
