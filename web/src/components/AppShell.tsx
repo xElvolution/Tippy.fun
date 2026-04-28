@@ -9,7 +9,8 @@ import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 
 /**
  * Paths that use public/marketing chrome only (no workspace sidebar or slide-out dashboard nav).
- * Organizer/campaign workspace routes stay under the dashboard shell.
+ * Operator dashboard (`/operator_dashboard`, settings, wizard, etc.) keeps the workspace sidebar.
+ * `/campaign/*` is a focused campaign shell — no sidebar; use header + in-page tabs only.
  */
 const PUBLIC_FULL_WIDTH_PREFIXES: readonly string[] = [
   '/public_campaign_page',
@@ -69,8 +70,13 @@ function isActivePath(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+/** In-app campaign workspace (overview, submissions, …) — not the operator dashboard list. */
+function isCampaignWorkspaceRoute(pathname: string): boolean {
+  return pathname === '/campaign' || pathname.startsWith('/campaign/');
+}
+
 function isCampaignFlowPath(pathname: string): boolean {
-  if (pathname === '/campaign' || pathname.startsWith('/campaign/')) return true;
+  if (isCampaignWorkspaceRoute(pathname)) return true;
   return CAMPAIGN_FLOW_PATHS.has(pathname);
 }
 
@@ -111,7 +117,8 @@ function AppShellChrome({
   const [campaignsMenuOpen, setCampaignsMenuOpen] = React.useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const isPublicSection = isPublicFullWidthPath(pathname);
-  const showDesktopSidebar = pathname !== '/' && !isPublicSection;
+  const inCampaignWorkspace = isCampaignWorkspaceRoute(pathname);
+  const showDesktopSidebar = pathname !== '/' && !isPublicSection && !inCampaignWorkspace;
   const hideSlideOutNav = pathname === '/' || isPublicSection;
   // Notifications only belong to the authenticated dashboard shell, not the
   // landing / public marketing pages (where they add noise and clip on mobile).
@@ -509,7 +516,7 @@ function AppShellChrome({
             </Link>
           </div>
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-            {showDesktopSidebar && (
+            {(showDesktopSidebar || inCampaignWorkspace) && (
               <Link
                 href="/public_campaign_page"
                 className="text-sm font-semibold text-primary hover:text-primary-container transition-colors whitespace-nowrap"
