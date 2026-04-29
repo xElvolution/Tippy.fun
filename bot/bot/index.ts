@@ -30,7 +30,7 @@ if (!token || !clientId) {
 function configError(): string | null {
   if (!isSupabaseConfigured()) {
     return (
-      'Supabase is not configured. Add **NEXT_PUBLIC_SUPABASE_URL** and **SUPABASE_SERVICE_ROLE_KEY**, then run `supabase/migrations/001_initial.sql` in the Supabase SQL editor.'
+      'Database is not configured. Set the required database environment variables and apply migrations.'
     );
   }
   if (!isEncryptionConfigured()) {
@@ -105,10 +105,10 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
       case 'help': {
         const embed = new EmbedBuilder()
           .setColor(0x0062ce)
-          .setTitle('Tippy - Conflux eSpace + Supabase')
+          .setTitle('Tippy - Conflux eSpace')
           .setDescription(
             [
-              '`/register` - create custodial **Conflux eSpace** wallet (encrypted in Supabase)',
+              '`/register` - create custodial **Conflux eSpace** wallet (stored securely)',
               '`/balance` - **CFX**, optional test ERC-20, dashboard watchlist, **project points**',
               '`/tip` - send **CFX** or **ERC-20** watchlist / env test token on-chain',
               '`/points` - capped **project points** for this server (owner: create/mint)',

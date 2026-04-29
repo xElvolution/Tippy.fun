@@ -10,6 +10,7 @@ import { fetchErc20BalanceHuman, fetchOptionalTestErc20BalanceHuman } from '@lib
 import { listDashboardTokensForUser } from '@lib/db/dashboardTokens';
 import { fetchCfxDepositsFromChain } from '@lib/conflux/deposits';
 import { getConfluxNetworkSlug } from '@lib/conflux/network';
+import { isAddress } from 'viem';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +28,23 @@ export async function GET() {
   try {
     const user = await getUserByDiscordId(discordId);
     if (!user) {
+      return NextResponse.json({
+        registered: false,
+        network: getConfluxNetworkSlug(),
+        evmAddress: null,
+        cfxBalance: null,
+        testErc20Balance: null,
+        customTokens: [] as { id: string; label: string; tokenType: string; balance: string }[],
+        otherTokenCount: 0,
+        points: [] as { symbol: string; balance: string }[],
+        tips: [],
+        depositPreviews: [],
+      });
+    }
+
+    // Legacy row guard: old installs can still hold non-eSpace addresses
+    // (e.g. `inj...`). Conflux EVM RPC requires `0x...`.
+    if (!isAddress(user.evm_address)) {
       return NextResponse.json({
         registered: false,
         network: getConfluxNetworkSlug(),

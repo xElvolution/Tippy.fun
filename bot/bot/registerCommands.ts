@@ -3,7 +3,7 @@ import { fetchBotGuildIds } from '../lib/discord/fetchBotGuildIds';
 
 const points = new SlashCommandBuilder()
   .setName('points')
-  .setDescription('Project points for this server (capped supply, stored in Supabase)')
+  .setDescription('Project points for this server (capped supply, stored securely)')
   .addSubcommand((sc) =>
     sc
       .setName('create')
@@ -41,10 +41,10 @@ export const commandData = [
   new SlashCommandBuilder().setName('help').setDescription('List Tippy commands'),
   new SlashCommandBuilder()
     .setName('register')
-    .setDescription('Create your custodial Conflux eSpace wallet (stored encrypted in Supabase)'),
+    .setDescription('Create your custodial Conflux eSpace wallet (stored securely)'),
   new SlashCommandBuilder()
     .setName('balance')
-    .setDescription('CFX, optional test ERC-20, dashboard ERC-20 watchlist, and project points'),
+    .setDescription('CFX, tUSDT0 (USDT0 mock), dashboard ERC-20 watchlist, and project points'),
   new SlashCommandBuilder()
     .setName('tip')
     .setDescription('Send CFX or dashboard ERC-20 watchlist tokens to a registered member')

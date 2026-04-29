@@ -18,6 +18,7 @@ import {
 import { Button, Card, AddressCopy, Badge } from './UI';
 import type { Transaction } from '@/types/types';
 import type { DashboardTipRow } from '@lib/db/tips';
+import { getDiscordInviteUrl } from '@lib/discordInvite';
 
 export type DepositPreview = {
   txHash: string;
@@ -31,7 +32,7 @@ export type MeDashboardData = {
   network: string;
   evmAddress: string | null;
   cfxBalance: string | null;
-  /** Optional env test token (`TEST_ERC20_CONTRACT`). */
+  /** Optional env token (`TEST_ERC20_CONTRACT`) shown as Test USDT. */
   testErc20Balance: string | null;
   /** User-added ERC-20 contracts from `user_dashboard_tokens` (stored as cw20). */
   customTokens: { id: string; label: string; tokenType: string; balance: string }[];
@@ -78,11 +79,11 @@ function buildHoldingRows(d: MeDashboardData): HoldingRow[] {
   rows.push({
     id: 'test-erc20',
     letter: 'T',
-    title: 'Test ERC-20',
-    ticker: 'ENV',
-    rail: 'ERC-20 (optional)',
+    title: 'tUSDT0',
+    ticker: 'USDT0',
+    rail: 'USDT0 mock',
     amountLine: d.testErc20Balance ?? '0',
-    search: 'test erc20 env token',
+    search: 'tusdt0 usdt0 test erc20 env token',
   });
   for (const t of d.customTokens ?? []) {
     rows.push({
@@ -306,6 +307,8 @@ export const Dashboard = ({
   }
 
   if (data && !data.registered) {
+    const discordInviteUrl = getDiscordInviteUrl();
+
     return (
       <Card className="p-10 text-center max-w-xl mx-auto">
         <p className="font-headline text-xl font-bold text-on-surface mb-3">No Tippy wallet yet</p>
@@ -313,9 +316,16 @@ export const Dashboard = ({
           Open Discord, go to a server with Tippy, and run <strong className="text-on-surface">/register</strong>. Then refresh this
           page - your Conflux eSpace address and CFX balance will show here.
         </p>
-        <Button variant="secondary" onClick={() => window.location.reload()}>
-          Refresh
-        </Button>
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          <Button variant="secondary" className="min-w-[130px]" onClick={() => window.location.reload()}>
+            Refresh
+          </Button>
+          {discordInviteUrl ? (
+            <Button variant="outline" className="min-w-[130px]" href={discordInviteUrl}>
+              Add bot
+            </Button>
+          ) : null}
+        </div>
       </Card>
     );
   }

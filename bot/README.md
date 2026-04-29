@@ -75,6 +75,92 @@ pnpm dev:all
 - **Marketing page:** [`/landing`](/landing) - public hero (same content as logged-out home). Logo in the app sidebar/header links here.
 - **In-app routes (query):** `/?view=activity` → Activity; `/?view=console` → Owner console; `/?view=help` / `settings`; no `view` → Dashboard. Set `NEXT_PUBLIC_APP_URL` to the **origin only** (no `/console` path) unless you intend that screen on every open.
 
+## Deploy Discord bot on VPS (no web)
+
+If your web app is on Vercel, deploy the Discord worker separately on a VPS so slash commands always respond.
+
+### 1) Install runtime (Ubuntu)
+
+```bash
+sudo apt update
+sudo apt install -y git curl
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+sudo npm i -g pnpm pm2
+node -v
+pnpm -v
+```
+
+Use Node 20 LTS.
+
+### 2) Clone repo and install bot deps
+
+```bash
+cd /opt
+sudo git clone https://github.com/<your-user>/tippy.fun.git
+sudo chown -R $USER:$USER /opt/tippy.fun
+cd /opt/tippy.fun/bot
+pnpm install --frozen-lockfile
+```
+
+### 3) Configure production env
+
+Create `/opt/tippy.fun/bot/.env` and set at minimum:
+
+- `DISCORD_BOT_TOKEN`
+- `DISCORD_CLIENT_ID`
+- `DISCORD_CLIENT_SECRET`
+- `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL`)
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `ENCRYPTION_KEY` (64 hex chars)
+- `CONFLUX_NETWORK`
+- optional `DISCORD_GUILD_ID` (for fast guild command updates)
+
+### 4) Start with PM2 (always-on)
+
+```bash
+cd /opt/tippy.fun/bot
+pm2 start "pnpm start:bot" --name tippy-bot
+pm2 logs tippy-bot
+```
+
+Persist across reboot:
+
+```bash
+pm2 startup
+# run the command PM2 prints
+pm2 save
+```
+
+### 5) Register slash commands once
+
+```bash
+cd /opt/tippy.fun/bot
+pnpm register-commands
+```
+
+Then verify in Discord with `/ping`, `/help`, and `/register`.
+
+### 6) Update flow after new commits
+
+```bash
+cd /opt/tippy.fun
+git pull
+cd bot
+pnpm install --frozen-lockfile
+pm2 restart tippy-bot
+pnpm register-commands
+```
+
+### 7) Troubleshooting quick checks
+
+```bash
+pm2 status
+pm2 logs tippy-bot --lines 200
+```
+
+If Discord shows "application did not respond", the worker is down, crashed, or missing env vars.
+
 ### Scripts
 
 | Command | Description |
