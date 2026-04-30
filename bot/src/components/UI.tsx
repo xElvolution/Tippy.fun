@@ -53,7 +53,7 @@ export const Button = ({
   const base =
     'px-6 py-3 rounded-xl font-bold text-sm transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2';
   const variants = {
-    primary: 'bg-primary text-on-primary hover:shadow-[0_0_20px_-5px_rgba(173,199,255,0.4)]',
+    primary: 'bg-primary text-on-primary hover:shadow-[0_0_20px_-5px_rgb(132_85_239_/_0.45)]',
     secondary: 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest',
     outline: 'bg-transparent border border-outline-variant/30 text-on-surface hover:bg-surface-container-low',
     ghost: 'bg-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low',
@@ -89,7 +89,7 @@ export const Card = ({
   return (
     <div
       className={`bg-surface-container-low rounded-2xl border border-outline-variant/5 ${
-        hover ? 'hover:border-primary/20 transition-all duration-300' : ''
+        hover ? 'group hover:border-primary/20 transition-all duration-300' : ''
       } ${className}`}
     >
       {children}

@@ -273,7 +273,7 @@ export function HomeClient() {
               onClick={() => goToPage(item.id)}
               className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold text-sm transition-all duration-200 ${
                 currentPage === item.id
-                  ? 'bg-primary/10 text-primary shadow-[0_0_15px_-5px_rgba(173,199,255,0.2)]'
+                  ? 'bg-primary/15 text-primary shadow-[0_0_18px_-4px_rgb(132_85_239_/_0.28)]'
                   : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
               }`}
             >

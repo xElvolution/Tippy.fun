@@ -104,7 +104,7 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
       }
       case 'help': {
         const embed = new EmbedBuilder()
-          .setColor(0x0062ce)
+          .setColor(0x8455ef)
           .setTitle('Tippy - Conflux eSpace')
           .setDescription(
             [
@@ -168,7 +168,7 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
             await interaction.editReply({
               embeds: [
                 new EmbedBuilder()
-                  .setColor(0xadc7ff)
+                  .setColor(0x8455ef)
                   .setTitle('Balances & points')
                   .setDescription(text),
               ],
@@ -250,7 +250,7 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
           await interaction.editReply({
             embeds: [
               new EmbedBuilder()
-                .setColor(0xadc7ff)
+                .setColor(0x8455ef)
                 .setTitle('Tip broadcast')
                 .setDescription(
                   `Sent **${amount} ${resolved.displayLabel}** to <@${toDiscord}>.\n**Tx:** \`${txHash}\`\n[Explorer](${explorer})`,

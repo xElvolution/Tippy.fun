@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="CNH-themed stablecoin mark">
+  <defs>
+    <linearGradient id="cnh-fill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="40" height="40" rx="12" fill="url(#cnh-fill)" />
+  <text
+    x="24"
+    y="31"
+    text-anchor="middle"
+    fill="#ecfdf5"
+    font-family="system-ui, -apple-system, Segoe UI, sans-serif"
+    font-size="22"
+    font-weight="700"
+  >
+    &#165;
+  </text>
+</svg>

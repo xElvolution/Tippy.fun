@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Conflux CFX">
+  <defs>
+    <linearGradient id="cfx-ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9d6ff5" />
+      <stop offset="100%" stop-color="#5b31c9" />
+    </linearGradient>
+  </defs>
+  <circle cx="24" cy="24" r="22" fill="url(#cfx-ring)" />
+  <!-- Stylized orbital mark placeholder -->
+  <path
+    fill="none"
+    stroke="#f4f2ff"
+    stroke-width="2.25"
+    stroke-linecap="round"
+    opacity="0.95"
+    d="M12 31c6-17 29-17 31-3s-26 26-37 13"
+  />
+  <circle cx="18" cy="18" r="3" fill="#f4f2ff" opacity="0.9" />
+  <circle cx="32" cy="28" r="2.75" fill="#f4f2ff" opacity="0.85" />
+</svg>

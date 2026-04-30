@@ -5,7 +5,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        headline: ['var(--font-manrope)', 'sans-serif'],
+        headline: ['var(--font-headline)', 'sans-serif'],
         body: ['var(--font-inter)', 'sans-serif'],
         label: ['var(--font-inter)', 'sans-serif'],
       },

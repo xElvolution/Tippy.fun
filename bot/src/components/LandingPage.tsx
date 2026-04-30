@@ -4,7 +4,21 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'motion/react';
-import { Shield, UserPlus, Landmark, Heart, Stars, Sun, Moon, Twitter, ExternalLink, MessageCircle, BookOpen, Plus } from 'lucide-react';
+import {
+  Shield,
+  UserPlus,
+  Landmark,
+  Heart,
+  Stars,
+  Sun,
+  Moon,
+  Twitter,
+  ExternalLink,
+  MessageCircle,
+  BookOpen,
+  Plus,
+  Coins,
+} from 'lucide-react';
 import { getDiscordInviteUrl } from '@lib/discordInvite';
 import {
   publicCommunityDiscordUrl,
@@ -14,6 +28,48 @@ import {
 } from '@/lib/publicSiteLinks';
 import { Button, Card } from './UI';
 import { TippyLogoLink } from './TippyLogoLink';
+
+type SupportedTokenRow = {
+  name: string;
+  symbol: string;
+  type: string;
+  img?: string;
+};
+
+const SUPPORTED_TOKENS: SupportedTokenRow[] = [
+  {
+    name: 'Conflux',
+    symbol: 'CFX',
+    type: 'NATIVE',
+    img: '/conflux-logo.png',
+  },
+  {
+    name: 'Tether',
+    symbol: 'USDT',
+    type: 'ERC-20',
+    img: '/token-usdt.png',
+  },
+  {
+    name: 'USDT0 (bridged)',
+    symbol: 'USDT0 · tUSDT0',
+    type: 'TESTNET',
+    img: '/token-usdt0.png',
+  },
+  {
+    name: 'AxCNH (mock)',
+    symbol: 'tAxCNH',
+    type: 'TESTNET',
+    img: '/token-cnh.svg',
+  },
+  {
+    name: 'Your token',
+    symbol: 'ERC-20',
+    type: 'WATCHLIST',
+  },
+];
+
+const sectionFade = { initial: { opacity: 0, y: 16 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-60px' } };
+const staggerChild = { initial: { opacity: 0, y: 12 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-40px' } };
 
 export const LandingPage = ({
   authError,
@@ -80,7 +136,7 @@ export const LandingPage = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto space-y-10 relative z-10"
+          className="max-w-4xl mx-auto space-y-10 hero-inner"
         >
           {authError === 'OAuthCallback' ? (
             <Card className="p-5 text-left border-error/30 bg-error-container/10 max-w-2xl mx-auto">
@@ -99,11 +155,15 @@ export const LandingPage = ({
               </p>
             </Card>
           ) : null}
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-surface-container-low border border-outline-variant/10 text-primary font-medium text-xs tracking-wider uppercase">
-            Built for Conflux eSpace
+          <div className="inline-flex items-center gap-2.5 pl-2 pr-4 py-1.5 rounded-full bg-surface-container/80 border border-outline-variant/15 text-on-surface font-medium text-xs tracking-wider uppercase shadow-sm shadow-black/10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/conflux-logo.png" alt="" width={28} height={28} className="rounded-full bg-surface-container-high ring-1 ring-outline-variant/20 object-cover" />
+            <span className="text-on-surface-variant">Built on</span>
+            <span className="text-primary font-headline font-bold tracking-tight normal-case">Conflux eSpace</span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-headline font-extrabold tracking-tight leading-[1.1] text-on-surface">
-            Tip CFX & earn project points <span className="text-primary">directly in Discord</span>
+          <h1 className="text-5xl md:text-7xl font-headline font-extrabold tracking-tight leading-[1.08] text-on-background drop-shadow-sm">
+            Tip CFX &amp; earn project points{' '}
+            <span className="text-primary [text-shadow:0_0_42px_rgb(132_85_239_/_0.35)]">directly in Discord</span>
           </h1>
           <p className="text-on-surface-variant text-xl max-w-2xl mx-auto font-medium leading-relaxed">
             The fastest way to reward community contributors and participate in ecosystem drops without leaving your server.
@@ -127,8 +187,8 @@ export const LandingPage = ({
           </div>
         </motion.div>
 
-        <div className="absolute top-1/2 left-0 w-64 h-64 bg-primary/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-tertiary-container/10 blur-[150px] rounded-full" />
+        <div className="absolute top-1/2 left-0 w-64 h-64 bg-primary/8 blur-[120px] rounded-full pointer-events-none" aria-hidden />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-tertiary-container/8 blur-[150px] rounded-full pointer-events-none" aria-hidden />
       </section>
 
       <section className="py-12 bg-surface-container-lowest border-y border-outline-variant/10">
@@ -142,8 +202,10 @@ export const LandingPage = ({
               &quot;Tippy uses a custodial model to enable instant tipping within Discord. Your funds are held in per-user
               Conflux eSpace addresses managed by Tippy - see our policy for details.&quot;
             </p>
-            <div className="flex items-center gap-4">
-              <span className="text-primary font-bold">Conflux</span>
+            <div className="flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/conflux-logo.png" alt="" width={20} height={20} className="opacity-95 shrink-0 object-contain" />
+              <span className="text-primary font-bold font-headline">Conflux</span>
               <div className="h-4 w-[1px] bg-outline-variant/40" />
               <span className="text-on-surface-variant text-sm font-medium">Verified Safety</span>
             </div>
@@ -153,10 +215,10 @@ export const LandingPage = ({
 
       <section className="py-32 px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-20 text-center md:text-left">
+          <motion.div {...sectionFade} transition={{ duration: 0.45 }} className="mb-20 text-center md:text-left">
             <h2 className="text-4xl font-headline font-bold mb-4">Master Tippy in seconds</h2>
             <p className="text-on-surface-variant max-w-xl">A seamless bridge between your community interactions and your on-chain assets.</p>
-          </div>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
@@ -180,13 +242,15 @@ export const LandingPage = ({
                 desc: 'Active members earn capped project points and can participate in configured airdrop rules.',
               },
             ].map((step, i) => (
-              <Card key={i} hover className="p-8">
-                <div className="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center mb-6 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                  <step.icon size={32} />
-                </div>
-                <h3 className="text-xl font-bold mb-3 font-headline">{step.title}</h3>
-                <p className="text-on-surface-variant leading-relaxed text-sm">{step.desc}</p>
-              </Card>
+              <motion.div key={i} {...staggerChild} transition={{ duration: 0.42, delay: i * 0.06 }}>
+                <Card hover className="p-8 h-full">
+                  <div className="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center mb-6 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                    <step.icon size={32} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 font-headline">{step.title}</h3>
+                  <p className="text-on-surface-variant leading-relaxed text-sm">{step.desc}</p>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -194,7 +258,11 @@ export const LandingPage = ({
 
       <section className="py-24 lg:py-32 bg-surface-container-low overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <div className="mb-12 lg:mb-16 flex flex-col gap-5 md:flex-row md:items-center md:justify-between md:gap-10">
+          <motion.div
+            {...sectionFade}
+            transition={{ duration: 0.45 }}
+            className="mb-10 lg:mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-10"
+          >
             <div className="min-w-0 text-center md:text-left">
               <span className="font-headline font-bold tracking-wider uppercase text-[0.6875rem] text-primary mb-3 md:mb-4 block">
                 Ecosystem Assets
@@ -202,61 +270,56 @@ export const LandingPage = ({
               <h2 className="text-3xl sm:text-4xl font-headline font-bold tracking-tight">Supported Tokens</h2>
             </div>
             <p className="text-on-surface-variant text-sm sm:text-base max-w-md mx-auto md:mx-0 md:max-w-sm md:text-right leading-relaxed md:shrink-0">
-              Tip assets on Conflux eSpace using the same simple flow across rails.
+              Tip CFX, USDT, bridged <span className="text-on-surface font-medium">USDT0</span>, and testnet{' '}
+              <span className="text-on-surface font-medium">tAxCNH</span> on Conflux eSpace with the same flow.
             </p>
-          </div>
+          </motion.div>
 
           <div className="flex flex-nowrap md:flex-wrap justify-start md:justify-center items-stretch gap-5 sm:gap-6 lg:gap-8 overflow-x-auto md:overflow-visible no-scrollbar pb-1 md:pb-0 snap-x snap-mandatory md:snap-none">
-            {[
-              {
-                name: 'Conflux',
-                symbol: 'CFX',
-                type: 'NATIVE',
-                img: 'https://assets.coingecko.com/coins/images/13079/large/Conflux_logo.png',
-              },
-              {
-                name: 'Tether',
-                symbol: 'USDT',
-                type: 'ERC-20',
-                img: 'https://assets.coingecko.com/coins/images/325/large/Tether.png',
-              },
-              {
-                name: 'Your token',
-                symbol: 'ERC-20',
-                type: 'WATCHLIST',
-                img: 'https://assets.coingecko.com/coins/images/12504/large/uniswap-uni.png',
-              },
-            ].map((asset, i) => (
-              <div
-                key={i}
-                className="flex-none w-[min(16rem,calc(100vw-3rem))] sm:w-64 snap-start glass-card p-6 rounded-2xl border border-outline-variant/10 flex flex-col"
-              >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-primary/20 overflow-hidden shrink-0 bg-surface-container-high ring-1 ring-outline-variant/15">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={asset.img}
-                    alt={`${asset.name} logo`}
-                    width={48}
-                    height={48}
-                    className="w-full h-full object-contain p-1.5"
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <div className="flex justify-between items-start gap-3 mb-2">
-                  <h4 className="text-lg font-bold font-headline leading-tight">{asset.name}</h4>
-                  <span className="shrink-0 text-[0.6875rem] font-bold tracking-tighter text-primary px-2 py-0.5 bg-primary/10 rounded">
-                    {asset.type}
-                  </span>
-                </div>
-                <p className="text-on-surface-variant text-sm font-medium">{asset.symbol}</p>
-              </div>
-            ))}
-            <div className="flex-none w-[min(16rem,calc(100vw-3rem))] sm:w-64 snap-start glass-card p-6 rounded-2xl border border-outline-variant/10 opacity-50 flex flex-col items-center justify-center text-center min-h-[11rem] md:min-h-0">
+            {SUPPORTED_TOKENS.map((asset, i) => (
+                <motion.div
+                  key={`${asset.name}-${asset.symbol}`}
+                  layout
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: Math.min(i * 0.04, 0.24) }}
+                  className="flex-none w-[min(16rem,calc(100vw-3rem))] sm:w-64 snap-start glass-card p-6 rounded-2xl border border-outline-variant/10 flex flex-col"
+                >
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-primary/15 overflow-hidden shrink-0 bg-surface-container-high ring-1 ring-outline-variant/15">
+                    {asset.img ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={asset.img}
+                        alt={`${asset.name} logo`}
+                        width={48}
+                        height={48}
+                        className="w-full h-full object-contain p-1.5"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <Coins className="text-primary" size={26} aria-hidden />
+                    )}
+                  </div>
+                  <div className="flex justify-between items-start gap-3 mb-2">
+                    <h4 className="text-lg font-bold font-headline leading-tight">{asset.name}</h4>
+                    <span className="shrink-0 text-[0.6875rem] font-bold tracking-tighter text-primary px-2 py-0.5 bg-primary/10 rounded">
+                      {asset.type}
+                    </span>
+                  </div>
+                  <p className="text-on-surface-variant text-sm font-medium leading-snug">{asset.symbol}</p>
+                </motion.div>
+              ))}
+            <motion.div
+              layout
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, delay: 0.12 }}
+              className="flex-none w-[min(16rem,calc(100vw-3rem))] sm:w-64 snap-start glass-card p-6 rounded-2xl border border-outline-variant/10 opacity-60 flex flex-col items-center justify-center text-center min-h-[11rem] md:min-h-0"
+            >
               <Plus className="text-outline mb-4 shrink-0" size={32} />
               <h4 className="text-lg font-bold font-headline">And More</h4>
               <p className="text-on-surface-variant text-sm font-medium mt-1">New listings weekly</p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -279,7 +342,7 @@ export const LandingPage = ({
             </div>
             <p className="mt-8 text-on-primary-container/70 font-medium">Join Discord communities building on Conflux.</p>
           </div>
-          <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_70%_30%,#adc7ff_0%,transparent_50%)]" />
+          <div className="absolute inset-0 opacity-25 pointer-events-none bg-[radial-gradient(circle_at_70%_30%,rgb(132_85_239_/_0.55)_0%,transparent_55%)]" />
         </div>
       </section>
 

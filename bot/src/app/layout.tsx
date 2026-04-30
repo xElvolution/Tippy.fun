@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter, Manrope } from 'next/font/google';
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import { getServerSession } from 'next-auth/next';
 import { Providers } from '@/components/Providers';
 import { authOptions } from '@/lib/auth';
 import './globals.css';
 
-const manrope = Manrope({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-manrope',
+  variable: '--font-headline',
   display: 'swap',
 });
 
@@ -44,7 +44,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${manrope.variable} ${inter.variable} min-h-screen antialiased`}>
+      <body className={`${plusJakarta.variable} ${inter.variable} min-h-screen antialiased`}>
         <Providers session={session}>{children}</Providers>
       </body>
     </html>

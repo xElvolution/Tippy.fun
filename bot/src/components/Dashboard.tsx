@@ -14,6 +14,7 @@ import {
   Plus,
   ChevronDown,
   Coins,
+  RefreshCw,
 } from 'lucide-react';
 import { Button, Card, AddressCopy, Badge } from './UI';
 import type { Transaction } from '@/types/types';
@@ -339,7 +340,20 @@ export const Dashboard = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <Card className="lg:col-span-8 p-8 relative overflow-visible flex flex-col justify-between min-h-[280px]">
           <div className="relative z-10">
-            <p className="font-headline font-bold tracking-wider uppercase text-[0.6875rem] text-on-surface-variant mb-2">CFX balance</p>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <p className="font-headline font-bold tracking-wider uppercase text-[0.6875rem] text-on-surface-variant">CFX balance</p>
+              <Button
+                variant="ghost"
+                className="!px-2.5 !py-2"
+                onClick={() => {
+                  if (onRefresh) onRefresh();
+                  else window.location.reload();
+                }}
+                title="Refresh balance"
+              >
+                <RefreshCw size={16} />
+              </Button>
+            </div>
             <h1 className="font-headline text-[3.5rem] font-extrabold text-on-surface tracking-tighter leading-none mb-2">
               {cfxBal} <span className="text-2xl text-on-surface-variant font-bold">CFX</span>
             </h1>
