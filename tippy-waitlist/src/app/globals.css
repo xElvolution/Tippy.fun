@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0b10;
+  --foreground: #e8e9f0;
+  --muted: #a9adc4;
+  --primary: #8455ef;
+  --primary-glow: rgb(132 85 239 / 0.35);
+  --surface: #12131c;
+  --surface-high: #1e2130;
+  --border: rgb(255 255 255 / 0.08);
+  --error: #ffb4ab;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-surface: var(--surface);
+  --color-surface-high: var(--surface-high);
+  --color-border: var(--border);
+  --color-error: var(--error);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-head), var(--font-sans);
+}
+
+.glass-panel {
+  background: rgb(22 24 34 / 0.72);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.hero-mesh {
+  position: relative;
+  background:
+    radial-gradient(ellipse 100% 80% at 50% -20%, rgb(132 85 239 / 0.22), transparent 55%),
+    linear-gradient(135deg, rgb(107 56 212 / 0.1) 0%, var(--background) 65%);
+}
+
+.hero-mesh::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 50% at 50% 100%, rgb(132 85 239 / 0.1), transparent 60%);
+}
