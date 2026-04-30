@@ -8,6 +8,20 @@ export function publicExplorerHomeUrl(): string {
   return net === 'mainnet' ? 'https://evm.confluxscan.org' : 'https://evmtestnet.confluxscan.org';
 }
 
+/** Conflux Scan (eSpace) address page for the given `0x` deposit address. */
+export function publicAddressExplorerUrl(evmAddress: string): string {
+  const a = evmAddress?.trim();
+  if (!a || a === '-') return publicExplorerHomeUrl();
+  const home = publicExplorerHomeUrl();
+  try {
+    const u = new URL(home);
+    return `${u.origin}/address/${encodeURIComponent(a)}`;
+  } catch {
+    const base = home.replace(/\/$/, '');
+    return `${base}/address/${encodeURIComponent(a)}`;
+  }
+}
+
 /** Conflux community Discord (not the bot OAuth invite). */
 export function publicCommunityDiscordUrl(): string {
   return process.env.NEXT_PUBLIC_COMMUNITY_DISCORD_URL?.trim() || 'https://discord.com/invite/conflux';

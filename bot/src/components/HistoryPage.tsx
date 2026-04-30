@@ -90,8 +90,7 @@ export const HistoryPage = () => {
         <div className="space-y-2">
           <h1 className="text-4xl md:text-5xl font-extrabold font-headline tracking-tight text-on-surface">Activity history</h1>
           <p className="text-on-surface-variant text-lg">
-            Tips and withdrawals from your account record; incoming CFX deposits are read from the explorer API when available (not stored in the
-            database).
+            Tips and withdrawals tied to your account, plus incoming CFX deposits when we can associate them with your wallet.
           </p>
         </div>
         <div className="w-full md:w-96">

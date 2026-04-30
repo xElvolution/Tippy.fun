@@ -210,7 +210,7 @@ export const OwnerConsole = () => {
         masterTipError?: string | null;
       };
       if (!res.ok) throw new Error(j.error || res.statusText);
-      let m = `Created **${j.currency?.name}** (${j.currency?.symbol}). Saved in Supabase.`;
+      let m = `Created **${j.currency?.name}** (${j.currency?.symbol}).`;
       if (j.masterTipTx) {
         m += ` MasterTip tx \`${j.masterTipTx}\`.`;
       } else if (j.masterTipError) {
@@ -445,7 +445,7 @@ export const OwnerConsole = () => {
               <h3 className="text-lg font-bold font-headline mb-2">Create token / tpoints</h3>
               <p className="text-sm text-on-surface-variant mb-6 leading-relaxed">
                 <strong className="text-on-surface">Discord server owners</strong> can create capped currencies here or with{' '}
-                <strong className="text-on-surface">/points create</strong>. Each create is stored in Supabase (off-chain ledger); tips and withdrawals use{' '}
+                <strong className="text-on-surface">/points create</strong>. Point balances are tracked in Tippy; tips and withdrawals settle on{' '}
                 <strong className="text-on-surface">Conflux eSpace</strong> (CFX / ERC-20).
               </p>
               {ptMsg ?
@@ -521,8 +521,8 @@ export const OwnerConsole = () => {
               <div>
                 <h4 className="text-on-surface text-sm font-bold mb-1">Project points</h4>
                 <p className="text-on-surface-variant text-xs leading-relaxed">
-                  Point balances live in Postgres. Creating a currency also calls the <strong className="text-on-surface">MasterTip</strong> Solidity contract when{' '}
-                  <code className="text-xs bg-surface-container-high px-1 rounded">MASTER_TIP_CONTRACT</code> is set (gas from the owner&apos;s Tippy wallet).
+                  Point balances are tracked in Tippy. Depending on your deployment, creating a currency may also run an optional on-chain step (gas from the
+                  owner&apos;s Tippy wallet when enabled).
                 </p>
               </div>
             </div>
@@ -540,8 +540,8 @@ export const OwnerConsole = () => {
                   <span className="text-sm font-bold">{networkLabel}</span>
                 </div>
                 <div className="flex justify-between items-center py-4 border-b border-outline-variant/20">
-                  <span className="text-sm text-outline">Points storage</span>
-                  <span className="text-sm font-bold">Supabase</span>
+                  <span className="text-sm text-outline">Project points</span>
+                  <span className="text-sm font-bold">In Tippy</span>
                 </div>
                 <div className="flex justify-between items-center py-4">
                   <span className="text-sm text-outline">Custodial tips</span>

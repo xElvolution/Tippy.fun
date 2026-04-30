@@ -4,6 +4,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Wallet, Shield, Info, ExternalLink, AlertTriangle } from 'lucide-react';
 import { Button, Modal, Card, AddressCopy } from './UI';
+import { publicAddressExplorerUrl, publicLearnUrl } from '@/lib/publicSiteLinks';
 
 export const DepositModal = ({
   isOpen,
@@ -100,18 +101,32 @@ export const DepositModal = ({
                 <AddressCopy address={address} />
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Card className="p-4 flex flex-col items-center gap-2 bg-surface-container-lowest hover:border-primary/30 transition-colors cursor-pointer group">
-                    <div className="p-2 bg-surface-container-high rounded-lg group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                      <ExternalLink size={20} />
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Explorer</span>
-                  </Card>
-                  <Card className="p-4 flex flex-col items-center gap-2 bg-surface-container-lowest hover:border-primary/30 transition-colors cursor-pointer group">
-                    <div className="p-2 bg-surface-container-high rounded-lg group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                      <Info size={20} />
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Guide</span>
-                  </Card>
+                  <a
+                    href={publicAddressExplorerUrl(address)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                  >
+                    <Card className="p-4 flex flex-col items-center gap-2 bg-surface-container-lowest hover:border-primary/30 transition-colors cursor-pointer group h-full">
+                      <div className="p-2 bg-surface-container-high rounded-lg group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                        <ExternalLink size={20} />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Explorer</span>
+                    </Card>
+                  </a>
+                  <a
+                    href={publicLearnUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                  >
+                    <Card className="p-4 flex flex-col items-center gap-2 bg-surface-container-lowest hover:border-primary/30 transition-colors cursor-pointer group h-full">
+                      <div className="p-2 bg-surface-container-high rounded-lg group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                        <Info size={20} />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Guide</span>
+                    </Card>
+                  </a>
                 </div>
               </div>
 

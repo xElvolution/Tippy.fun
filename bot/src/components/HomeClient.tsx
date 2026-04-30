@@ -153,7 +153,7 @@ export function HomeClient() {
 
   const user = session.user;
   const displayName = user.name ?? user.email ?? 'Discord user';
-  const avatarSrc = user.image ?? 'https://cdn.discordapp.com/embed/avatars/0.png';
+  const discordAvatarSrc = user.image ?? 'https://cdn.discordapp.com/embed/avatars/0.png';
 
   const dashboardProps = {
     data: meDashboard,
@@ -341,20 +341,31 @@ export function HomeClient() {
           </button>
           <div className="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/5">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                <LayoutDashboard size={16} />
-              </div>
-              <div className="flex flex-col">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={discordAvatarSrc}
+                alt=""
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded-lg object-cover border border-outline-variant/25 bg-surface-container-high shrink-0"
+                referrerPolicy="no-referrer"
+              />
+              <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Discord</span>
                 <span className="text-xs font-mono font-bold text-on-surface truncate max-w-[9rem]" title={user.id}>
                   {displayName}
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-[10px] font-bold text-primary bg-primary/10 px-2 py-1 rounded w-fit">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <a
+              href={publicExplorerHomeUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-[10px] font-bold text-primary bg-primary/10 px-2 py-1 rounded w-fit hover:bg-primary/20 transition-colors"
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" aria-hidden />
               CONFLUX
-            </div>
+            </a>
           </div>
         </div>
       </aside>
@@ -389,7 +400,12 @@ export function HomeClient() {
                 <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Discord</span>
               </div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={avatarSrc} alt="" className="w-10 h-10 rounded-xl border-2 border-primary/20 object-cover" referrerPolicy="no-referrer" />
+              <img
+                src={discordAvatarSrc}
+                alt=""
+                className="w-10 h-10 rounded-xl border-2 border-primary/25 object-cover bg-surface-container-high"
+                referrerPolicy="no-referrer"
+              />
             </div>
           </div>
         </header>

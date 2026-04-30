@@ -429,7 +429,7 @@ export const Dashboard = ({
                           </div>
                           <div className="text-right shrink-0 pl-2">
                             <p className="text-sm font-bold font-mono text-on-surface tabular-nums">{row.amountLine}</p>
-                            <p className="text-[10px] text-on-surface-variant">On-chain / ledger</p>
+                            <p className="text-[10px] text-on-surface-variant">Wallet &amp; points</p>
                           </div>
                           {row.customTokenId ?
                             <button
@@ -523,8 +523,7 @@ export const Dashboard = ({
         <Card className="overflow-hidden">
           {transactions.length === 0 ?
             <p className="px-8 py-12 text-center text-sm text-on-surface-variant">
-              No recent tips or incoming CFX transfers found. Deposits appear when the explorer API lists incoming txs for your
-              address; tips show after /tip.
+              No recent activity yet. Incoming transfers and tips will show here when they&apos;re detected for your wallet.
             </p>
           : <>
               <div className="grid grid-cols-12 px-8 py-4 border-b border-outline-variant/10 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
