@@ -1,6 +1,305 @@
 "use client";
 
-import { useCallback, useEffect, useId, useState, type SVGProps } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type SVGProps,
+} from "react";
+
+const MASCOT_SRC = {
+  left: "/mascot/bubble-axolotl-peek-left.png",
+  right: "/mascot/bubble-axolotl-peek.png",
+  bottom: "/mascot/bubble-axolotl-peek-bottom.png",
+} as const;
+
+type Edge = keyof typeof MASCOT_SRC;
+
+type PeekRun = {
+  id: number;
+  edge: Edge;
+  anchor: number;
+  dwellMs: number;
+};
+
+function rnd(min: number, max: number): number {
+  return min + Math.random() * (max - min);
+}
+
+function pickEdge(): Edge {
+  const e: Edge[] = ["left", "right", "bottom"];
+  return e[Math.floor(Math.random() * 3)]!;
+}
+
+function usePrefersReducedMotion(): boolean {
+  const [prefers, setPrefers] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = (): void => setPrefers(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return prefers;
+}
+
+/** One pet at a time: peek edge → short hold → tuck away → idle → next edge. */
+function usePeekMascot(enabled: boolean): [PeekRun | null, () => void] {
+  const [run, setRun] = useState<PeekRun | null>(null);
+  const idRef = useRef(0);
+  const timersRef = useRef<number[]>([]);
+
+  const clearTimers = (): void => {
+    timersRef.current.forEach(window.clearTimeout);
+    timersRef.current = [];
+  };
+
+  const spawnPeek = useCallback((): void => {
+    idRef.current += 1;
+    const edge = pickEdge();
+    const anchor = edge === "bottom" ? rnd(24, 76) : rnd(30, 70);
+    setRun({
+      id: idRef.current,
+      edge,
+      anchor,
+      dwellMs: rnd(900, 1900),
+    });
+  }, []);
+
+  const peekDone = useCallback((): void => {
+    clearTimers();
+    setRun(null);
+    const idle = rnd(3400, 8400);
+    timersRef.current.push(window.setTimeout(spawnPeek, idle));
+  }, [spawnPeek]);
+
+  useEffect(() => {
+    if (!enabled) {
+      clearTimers();
+      const rid = window.requestAnimationFrame(() => setRun(null));
+      return () => cancelAnimationFrame(rid);
+    }
+    clearTimers();
+    timersRef.current.push(window.setTimeout(spawnPeek, rnd(650, 2200)));
+    return () => {
+      clearTimers();
+    };
+  }, [enabled, spawnPeek]);
+
+  return [run, peekDone];
+}
+
+const EXIT_MS = 340;
+
+function PeekPet({
+  run,
+  onActivate,
+  onPeekEnded,
+}: {
+  run: PeekRun;
+  onActivate: () => void;
+  onPeekEnded: () => void;
+}) {
+  const [shown, setShown] = useState(false);
+  const surfacedRef = useRef(false);
+
+  useEffect(() => {
+    const rid = window.requestAnimationFrame(() => setShown(true));
+    return () => cancelAnimationFrame(rid);
+  }, []);
+
+  useEffect(() => {
+    if (!shown) return;
+    const ht = window.setTimeout(() => setShown(false), run.dwellMs);
+    return () => window.clearTimeout(ht);
+  }, [shown, run.dwellMs]);
+
+  useEffect(() => {
+    if (shown) {
+      surfacedRef.current = true;
+    }
+  }, [shown]);
+
+  useEffect(() => {
+    if (shown || !surfacedRef.current) return;
+    const t = window.setTimeout(onPeekEnded, EXIT_MS);
+    return () => window.clearTimeout(t);
+  }, [shown, onPeekEnded]);
+
+  const dimensionCls =
+    run.edge === "bottom"
+      ? "h-[min(5.5rem,26vw)] w-auto max-w-none"
+      : "h-auto w-[min(7rem,28vw)] max-w-none";
+
+  const outerStyle: CSSProperties =
+    run.edge === "bottom"
+      ? { left: `${run.anchor}%`, bottom: 0 }
+      : { top: `${run.anchor}%`, ...(run.edge === "right" ? { right: 0 } : { left: 0 }) };
+
+  const outerCls =
+    run.edge === "bottom"
+      ? "fixed z-[44] -translate-x-1/2"
+      : "fixed z-[44] -translate-y-1/2";
+
+  const innerSlideCls =
+    run.edge === "bottom"
+      ? shown
+        ? "-translate-y-2 md:-translate-y-3"
+        : "translate-y-[calc(100%+4.25rem)]"
+      : run.edge === "right"
+        ? shown
+          ? "translate-x-2 md:translate-x-4"
+          : "translate-x-[calc(100%+2.85rem)]"
+        : shown
+          ? "-translate-x-2 md:-translate-x-4"
+          : "-translate-x-[calc(100%+2.85rem)]";
+
+  return (
+    <button
+      type="button"
+      onClick={onActivate}
+      aria-haspopup="dialog"
+      aria-label="Open Tipzy pet waitlist message"
+      style={{ pointerEvents: shown ? "auto" : "none", ...outerStyle }}
+      className={`${outerCls} cursor-pointer rounded-md border border-transparent bg-transparent p-0 outline-none transition-[filter] hover:brightness-110 focus-visible:ring-2 focus-visible:ring-violet-400/90`}
+    >
+      <span
+        className={`block origin-center transition-transform duration-[340ms] will-change-transform [transition-timing-function:cubic-bezier(0.34,1.12,0.64,1)] ${innerSlideCls}`}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={MASCOT_SRC[run.edge]}
+          alt=""
+          className={`pointer-events-none select-none drop-shadow-[0_0_18px_rgba(168,85,247,0.35)] ${dimensionCls}`}
+          draggable={false}
+        />
+      </span>
+    </button>
+  );
+}
+
+function TipzyPetModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-5">
+      <button
+        type="button"
+        aria-label="Close"
+        className="absolute inset-0 bg-black/65 backdrop-blur-[2px]"
+        onClick={onClose}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tipzy-pet-title"
+        className="relative flex max-h-[min(92vh,680px)] w-full max-w-lg flex-col overflow-hidden rounded-[22px] border border-black/[0.06] bg-white text-neutral-900 shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
+      >
+        <div className="relative shrink-0 border-b border-neutral-100 px-4 pb-4 pt-[1.125rem] sm:px-5 sm:pb-5 sm:pt-6">
+          <p
+            id="tipzy-pet-title"
+            className="pointer-events-none text-center text-[1.375rem] font-extrabold leading-tight tracking-tight text-neutral-950 sm:text-2xl md:text-[1.625rem]"
+          >
+            Tipzy pet
+          </p>
+          <button
+            type="button"
+            className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-2xl leading-none text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 sm:right-2"
+            onClick={onClose}
+            aria-label="Close Tipzy pet message"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col border-b border-neutral-100 px-4 pb-5 pt-4 sm:px-6">
+          <div className="relative isolate aspect-[16/10] max-h-[min(58vh,520px)] w-full min-h-[216px] shrink-0 overflow-hidden rounded-[18px] border border-neutral-200/90 bg-neutral-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] sm:aspect-[16/9] sm:rounded-[20px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/mascot/tipzy-pet-modal-mascot.png"
+              alt=""
+              className="pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover object-[center_55%]"
+              draggable={false}
+            />
+          </div>
+        </div>
+
+        <div className="shrink-0 p-5 pt-4">
+          <button
+            type="button"
+            disabled
+            className="relative flex w-full cursor-not-allowed items-center justify-center gap-3 rounded-[14px] border border-transparent bg-neutral-900 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] opacity-92"
+            title="Opens when the Tipzy.fun waitlist is live"
+          >
+            Coming soon
+            <svg
+              className="-mt-[1px] h-5 w-5 opacity-95"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M12 5v14m0 0l-7-7m7 7 7-7" />
+            </svg>
+          </button>
+          <p className="mt-4 text-center text-[11px] leading-relaxed text-neutral-500">
+            Get your Tipzy pet when the waitlist opens. Same coat of paint as Homecoming vibes, just fluffier fins.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReducedMotionPeek({ onActivate }: { onActivate: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onActivate}
+      aria-haspopup="dialog"
+      aria-label="Open Tipzy pet waitlist message"
+      className="fixed bottom-5 right-4 z-[44] rounded-full bg-transparent p-1 outline-none ring-violet-500/25 transition hover:brightness-125 focus-visible:ring-4 sm:bottom-6 sm:right-6"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={MASCOT_SRC.right}
+        alt=""
+        className="h-auto w-[4.65rem] max-w-[22vw] drop-shadow-[0_0_20px_rgba(168,85,247,0.45)]"
+        draggable={false}
+      />
+    </button>
+  );
+}
 
 function ordinalSuffix(n: number): string {
   const j = n % 10;
@@ -85,6 +384,13 @@ export default function Home() {
   const cornerFlowGradId = useId().replace(/:/g, "");
   const [rank, setRank] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [tipzyPetModalOpen, setTipzyPetModalOpen] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [peekRun, peekEnded] = usePeekMascot(!prefersReducedMotion);
+
+  const openTipzyPetModal = useCallback(() => setTipzyPetModalOpen(true), []);
+
+  const closeTipzyPetModal = useCallback(() => setTipzyPetModalOpen(false), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -120,9 +426,9 @@ export default function Home() {
     (rank !== null ? soulSubline(rank) : "Verifying arrival sequence…");
 
   return (
-    <div className="relative isolate flex min-h-dvh flex-col overflow-hidden bg-[#0a0a0a] text-zinc-100 hc-enter-soft">
+    <div className="relative isolate flex h-[100dvh] max-h-[100dvh] min-h-0 flex-col overflow-hidden bg-[#0a0a0a] text-zinc-100 hc-enter-soft">
       {/* lava blobs: charcoal depth + drifting violet glow (Ovle-style) */}
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-x-hidden overflow-y-visible" aria-hidden>
         <div className="hc-lava-blob hc-lava-a" />
         <div className="hc-lava-blob hc-lava-b" />
         <div className="hc-lava-blob hc-lava-c" />
@@ -199,7 +505,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative z-30 flex flex-1 flex-col items-center justify-center px-5 pb-24 pt-6 text-center md:pb-32 md:pt-8 lg:pb-36 lg:pt-10">
+      <main className="relative z-30 flex min-h-0 flex-1 flex-col items-center justify-center px-5 pb-10 pt-6 text-center md:pb-14 md:pt-8 lg:pb-16 lg:pt-10">
         <h1 className="hc-enter hc-enter-d320 text-[clamp(1.55rem,4.2vw,2.65rem)] font-semibold uppercase tracking-[0.14em] text-white md:tracking-[0.18em]">
           Congratulations
         </h1>
@@ -311,7 +617,13 @@ export default function Home() {
         </div>
       </main>
 
-      <div className="shrink-0 pb-10 md:pb-12" aria-hidden />
+      {prefersReducedMotion ? (
+        <ReducedMotionPeek onActivate={openTipzyPetModal} />
+      ) : peekRun ? (
+        <PeekPet key={peekRun.id} run={peekRun} onActivate={openTipzyPetModal} onPeekEnded={peekEnded} />
+      ) : null}
+
+      <TipzyPetModal open={tipzyPetModalOpen} onClose={closeTipzyPetModal} />
     </div>
   );
 }
